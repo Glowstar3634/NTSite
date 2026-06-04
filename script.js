@@ -1,6 +1,14 @@
 const canvas = document.getElementById("field");
 const ctx = canvas.getContext("2d");
 
+const homeScene = document.getElementById("homeScene");
+const pageScene = document.getElementById("pageScene");
+const backButton = document.getElementById("backButton");
+
+const pageKicker = document.getElementById("pageKicker");
+const pageTitle = document.getElementById("pageTitle");
+const pageBody = document.getElementById("pageBody");
+
 let stars = [];
 let nodes = [];
 
@@ -12,8 +20,99 @@ const mouse = {
 };
 
 let lastTime = 0;
+
 let warpStart = null;
 const WARP_DURATION = 1900;
+
+let travelStart = null;
+let travelDuration = 1250;
+let travelFocus = { x: 0.5, y: 0.5 };
+let warpCenter = { x: 0.5, y: 0.5 };
+let activePage = null;
+
+const pages = {
+  about: {
+    kicker: "Origin Point",
+    title: "About",
+    body: `
+      <p>
+        I’m Nova Travis — a creator moving between mathematics, physics,
+        writing, art, and technology.
+      </p>
+      <p>
+        This site is built like a personal universe: each section is not just
+        a page, but a region of thought. The goal is to make my work feel like
+        something you travel through, not something you simply scroll past.
+      </p>
+      <ul>
+        <li><strong>Core idea:</strong> structure and emotion are not opposites.</li>
+        <li><strong>Creative direction:</strong> math, physics, poetry, design, and invention.</li>
+        <li><strong>Current focus:</strong> building ideas that align technical depth with human meaning.</li>
+      </ul>
+    `
+  },
+
+  projects: {
+    kicker: "Built Systems",
+    title: "Projects",
+    body: `
+      <p>
+        My projects are where abstract ideas become usable systems, stories,
+        tools, and ventures.
+      </p>
+      <ul>
+        <li>
+          <strong>I.A.R.</strong> — an accident reporting platform for automatic
+          evidence capture, encrypted driver verification, real-time accident
+          data exchange, and police-ready incident reports.
+        </li>
+        <li>
+          <strong>A-LIGN</strong> — a book project about how math and physics
+          concepts can map onto life, identity, perspective, and growth.
+        </li>
+        <li>
+          <strong>Market Intelligence Tool</strong> — a planned stock-market
+          news scraper and screener using machine learning and AI-based signals.
+        </li>
+      </ul>
+    `
+  },
+
+  writing: {
+    kicker: "Language Field",
+    title: "Writing",
+    body: `
+      <p>
+        My writing explores perception, emotion, ambition, regret, idealization,
+        and the strange way meaning changes depending on the observer.
+      </p>
+      <ul>
+        <li><strong>Paint</strong> — perspective, color, morality, and interpretation.</li>
+        <li><strong>Stone</strong> — idealization, memory, symbolism, and being frozen in someone else’s mind.</li>
+        <li><strong>Recipe</strong> — creation, doubt, distortion, and the fear of ruining something meaningful.</li>
+        <li><strong>Gaze of Greed</strong> — desire, projection, and emotional imbalance.</li>
+      </ul>
+    `
+  },
+
+  math: {
+    kicker: "Concept Space",
+    title: "Math Notes",
+    body: `
+      <p>
+        This section is for the ideas I’m studying seriously and slowly:
+        topology, graph theory, differential forms, proofs, and the deeper
+        language behind structure.
+      </p>
+      <ul>
+        <li><strong>Topology</strong> — spaces, continuity, bases, quotients, and fundamental groups.</li>
+        <li><strong>Graph Theory</strong> — tournaments, matchings, orientations, Eulerian structure, and Hamiltonian paths.</li>
+        <li><strong>Differential Forms</strong> — wedge products, curl, divergence, and geometric calculus.</li>
+        <li><strong>Emergence</strong> — mathematical ways to describe when a collection of parts behaves like one object.</li>
+      </ul>
+    `
+  }
+};
 
 function random(min, max) {
   return Math.random() * (max - min) + min;
@@ -79,13 +178,64 @@ function getWarpAmount(time) {
   return 1 - easeOutCubic(progress);
 }
 
+function startTravel(focusX, focusY, duration = 1250) {
+  travelFocus.x = focusX;
+  travelFocus.y = focusY;
+
+  // During travel, lock the vanishing point to the destination.
+  // This makes the zoom feel like the intro warp, but aimed at the clicked corner.
+  warpCenter.x = focusX;
+  warpCenter.y = focusY;
+
+  travelDuration = duration;
+  travelStart = performance.now();
+  document.body.classList.add("traveling");
+}
+
+function getTravelAmount(time) {
+  if (travelStart === null) return 0;
+
+  const progress = clamp((time - travelStart) / travelDuration, 0, 1);
+
+  if (progress >= 1) {
+    travelStart = null;
+    document.body.classList.remove("traveling");
+
+    // After the warp finishes, return normal star projection to the screen center.
+    warpCenter.x = 0.5;
+    warpCenter.y = 0.5;
+
+    return 0;
+  }
+
+  // Same feeling as the intro: strongest at first, then smoothly settles.
+  return 1 - easeOutCubic(progress);
+}
+
+function setTravelCSSVarsFromElement(element) {
+  const rect = element.getBoundingClientRect();
+
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+
+  const dx = centerX - window.innerWidth / 2;
+  const dy = centerY - window.innerHeight / 2;
+
+  document.documentElement.style.setProperty("--travel-x", `${dx}px`);
+  document.documentElement.style.setProperty("--travel-y", `${dy}px`);
+
+  return {
+    x: centerX / window.innerWidth,
+    y: centerY / window.innerHeight
+  };
+}
+
 function projectStar(star, zOffset = 0) {
-  const centerX = canvas.width / 2;
-  const centerY = canvas.height / 2;
+  const centerX = canvas.width * warpCenter.x;
+  const centerY = canvas.height * warpCenter.y;
 
   const z = Math.max(0.045, star.z + zOffset);
   const perspective = 1 / z;
-
   const depth = 1 - z;
 
   const parallaxX = mouse.x * depth * 90;
@@ -116,23 +266,30 @@ function drawBackground() {
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Very subtle deep-space haze
   ctx.beginPath();
-  ctx.arc(canvas.width * 0.55, canvas.height * 0.38, canvas.width * 0.36, 0, Math.PI * 2);
+  ctx.arc(
+    canvas.width * 0.55,
+    canvas.height * 0.38,
+    canvas.width * 0.36,
+    0,
+    Math.PI * 2
+  );
   ctx.fillStyle = "rgba(40, 50, 120, 0.055)";
   ctx.fill();
 }
 
-function drawStars(time, delta, warpAmount) {
-  for (const star of stars) {
-    const oldProjection = projectStar(star, star.speed * delta * 28 * warpAmount);
+function drawStars(time, delta, warpAmount, travelAmount) {
+  const totalWarp = Math.max(warpAmount, travelAmount);
 
-    // Slow forward movement during normal state.
-    // Much faster movement during the intro warp.
-    const warpMultiplier = 1 + warpAmount * 260;
+  for (const star of stars) {
+    const oldProjection = projectStar(
+      star,
+      star.speed * delta * 46 * totalWarp
+    );
+
+    const warpMultiplier = 1 + totalWarp * 280;
     star.z -= star.speed * delta * warpMultiplier;
 
-    // Tiny circular drift so the stars do not all move in one direction.
     star.angle += star.orbitSpeed * delta;
     star.x += Math.cos(star.angle) * 0.0018 * delta;
     star.y += Math.sin(star.angle) * 0.0018 * delta;
@@ -144,10 +301,10 @@ function drawStars(time, delta, warpAmount) {
     const projection = projectStar(star);
 
     const offscreen =
-      projection.x < -200 ||
-      projection.x > canvas.width + 200 ||
-      projection.y < -200 ||
-      projection.y > canvas.height + 200;
+      projection.x < -240 ||
+      projection.x > canvas.width + 240 ||
+      projection.y < -240 ||
+      projection.y > canvas.height + 240;
 
     if (offscreen) {
       resetStar(star, true);
@@ -157,25 +314,22 @@ function drawStars(time, delta, warpAmount) {
     const pulse = Math.sin(time * star.twinkle + star.x) * 0.18;
     const alpha = clamp(star.alpha + pulse, 0.15, 1);
 
-    const radius = clamp(star.size * projection.scale * 0.72, 0.35, 3.2);
+    const radius = clamp(star.size * projection.scale * 0.72, 0.32, 3.0);
 
-    // Warp streaks
-    if (warpAmount > 0.03) {
+    if (totalWarp > 0.03) {
       ctx.beginPath();
       ctx.moveTo(oldProjection.x, oldProjection.y);
       ctx.lineTo(projection.x, projection.y);
-      ctx.strokeStyle = `rgba(220, 230, 255, ${warpAmount * alpha * 0.95})`;
+      ctx.strokeStyle = `rgba(220, 230, 255, ${totalWarp * alpha * 0.95})`;
       ctx.lineWidth = clamp(radius * 1.15, 0.55, 3.4);
       ctx.stroke();
     }
 
-    // Star core
     ctx.beginPath();
     ctx.arc(projection.x, projection.y, radius, 0, Math.PI * 2);
     ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
     ctx.fill();
 
-    // Soft glow for closer stars
     if (projection.depth > 0.45) {
       ctx.beginPath();
       ctx.arc(projection.x, projection.y, radius * 3.5, 0, Math.PI * 2);
@@ -231,6 +385,17 @@ function drawNodes(delta) {
   }
 }
 
+function updateSpaceObjectParallax() {
+  const objects = document.querySelectorAll(".space-object");
+
+  for (const object of objects) {
+    const depth = Number(object.dataset.depth || 8);
+
+    object.style.setProperty("--px", `${mouse.x * depth}px`);
+    object.style.setProperty("--py", `${mouse.y * depth}px`);
+  }
+}
+
 function draw(time) {
   const delta = Math.min(40, time - lastTime || 16);
   lastTime = time;
@@ -239,13 +404,74 @@ function draw(time) {
   mouse.y += (mouse.targetY - mouse.y) * 0.035;
 
   const warpAmount = getWarpAmount(time);
+  const travelAmount = getTravelAmount(time);
 
   drawBackground();
-  drawStars(time, delta, warpAmount);
+  drawStars(time, delta, warpAmount, travelAmount);
   drawNodes(delta);
+  updateSpaceObjectParallax();
 
   requestAnimationFrame(draw);
 }
+
+function openPage(pageName, clickedButton) {
+  if (!pages[pageName]) return;
+  if (activePage === pageName) return;
+
+  activePage = pageName;
+
+  const page = pages[pageName];
+
+  pageKicker.textContent = page.kicker;
+  pageTitle.textContent = page.title;
+  pageBody.innerHTML = page.body;
+
+  const focus = setTravelCSSVarsFromElement(clickedButton);
+
+  pageScene.classList.add("active", "entering");
+  homeScene.classList.add("exiting");
+
+  startTravel(focus.x, focus.y, 1250);
+
+  setTimeout(() => {
+    pageScene.classList.remove("entering");
+  }, 90);
+
+  setTimeout(() => {
+    homeScene.classList.remove("active", "exiting");
+  }, 850);
+}
+
+function closePage() {
+  if (!activePage) return;
+
+  const matchingButton = document.querySelector(`[data-page="${activePage}"]`);
+  const focus = matchingButton
+    ? setTravelCSSVarsFromElement(matchingButton)
+    : { x: 0.5, y: 0.5 };
+
+  pageScene.classList.add("exiting");
+  homeScene.classList.add("active", "entering");
+
+  startTravel(focus.x, focus.y, 1150);
+
+  setTimeout(() => {
+    homeScene.classList.remove("entering");
+  }, 90);
+
+  setTimeout(() => {
+    pageScene.classList.remove("active", "exiting");
+    activePage = null;
+  }, 850);
+}
+
+document.querySelectorAll("[data-page]").forEach((button) => {
+  button.addEventListener("click", () => {
+    openPage(button.dataset.page, button);
+  });
+});
+
+backButton.addEventListener("click", closePage);
 
 window.addEventListener("mousemove", (event) => {
   mouse.targetX = (event.clientX / window.innerWidth - 0.5) * -10;
@@ -258,6 +484,12 @@ window.addEventListener("mouseleave", () => {
 });
 
 window.addEventListener("resize", resizeCanvas);
+
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closePage();
+  }
+});
 
 resizeCanvas();
 requestAnimationFrame(draw);

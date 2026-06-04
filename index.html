@@ -4,100 +4,48 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>SPRNOVA | Nova Travis</title>
+  <title>Nova Travis</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="loading">
   <canvas id="field"></canvas>
 
-  <header class="navbar">
-    <div class="logo">SPRNOVA</div>
-    <nav>
-      <a href="#about">About</a>
-      <a href="#projects">Projects</a>
-      <a href="#writing">Writing</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </header>
+  <div id="space-ui">
+    <section id="homeScene" class="scene home-scene active">
+      <button class="corner-link top-left space-object" data-page="about" data-depth="16">
+        About
+      </button>
 
-  <main>
-    <section class="hero">
-      <p class="eyebrow">math • physics • art • invention</p>
-      <h1>
-        I build ideas where equations, stories, and systems align.
-      </h1>
-      <p class="hero-text">
-        I’m Nova Travis — a creator exploring the connection between mathematics,
-        physics, art, writing, technology, and human experience.
-      </p>
+      <button class="corner-link top-right space-object" data-page="projects" data-depth="16">
+        Projects
+      </button>
 
-      <div class="hero-buttons">
-        <a href="#projects" class="button primary">View Projects</a>
-        <a href="#writing" class="button secondary">Read Writing</a>
+      <button class="corner-link bottom-left space-object" data-page="writing" data-depth="16">
+        Writing
+      </button>
+
+      <button class="corner-link bottom-right space-object" data-page="math" data-depth="16">
+        Math Notes
+      </button>
+
+      <div class="identity space-object" data-depth="7">
+        <h1>NOVA</h1>
+        <p>TRAVIS</p>
       </div>
     </section>
 
-    <section id="about" class="section">
-      <h2>About</h2>
-      <p>
-        My work lives between structure and emotion: proofs, poems, software,
-        physics, and stories about how people make sense of the world.
-      </p>
+    <section id="pageScene" class="scene page-scene">
+      <button id="backButton" class="back-button space-object" data-depth="14">
+        ← Back
+      </button>
+
+      <article class="page-content space-object" data-depth="8">
+        <p id="pageKicker" class="page-kicker"></p>
+        <h2 id="pageTitle"></h2>
+        <div id="pageBody"></div>
+      </article>
     </section>
-
-    <section id="projects" class="section">
-      <h2>Projects</h2>
-
-      <div class="grid">
-        <article class="card">
-          <h3>A-LIGN</h3>
-          <p>
-            A book project connecting math and physics concepts to life choices,
-            growth, identity, and perspective.
-          </p>
-        </article>
-
-        <article class="card">
-          <h3>I.A.R.</h3>
-          <p>
-            An accident reporting app focused on evidence capture, encrypted
-            identity exchange, and police-ready reports.
-          </p>
-        </article>
-
-        <article class="card">
-          <h3>Math Notes</h3>
-          <p>
-            Topology, graph theory, differential forms, proof writing, and other
-            ideas I’m learning deeply.
-          </p>
-        </article>
-      </div>
-    </section>
-
-    <section id="writing" class="section">
-      <h2>Writing</h2>
-
-      <div class="quote-card">
-        <p>
-          “The art has meaning because we mean it.”
-        </p>
-        <span>— from Paint</span>
-      </div>
-    </section>
-
-    <section id="contact" class="section">
-      <h2>Contact</h2>
-      <p>
-        Reach me at:
-        <a href="mailto:spr.novatravis29@gmail.com">spr.novatravis29@gmail.com</a>
-      </p>
-    </section>
-  </main>
-
-  <footer>
-    <p>© 2026 Nova Travis. Built from scratch.</p>
-  </footer>
+  </div>
 
   <script src="script.js"></script>
 </body>
