@@ -324,7 +324,7 @@ function drawStars(time, delta, warpAmount, travelAmount) {
       star.x += ux * direction * warpSpeed * 95;
       star.y += uy * direction * warpSpeed * 95;
 
-      star.z -= direction * star.speed * delta * (1 + totalWarp * 110);
+      star.z -= direction * star.speed * delta * (1 + totalWarp * 165);
     } else {
       star.z -= normalSpeed;
     }
@@ -383,7 +383,7 @@ function drawStars(time, delta, warpAmount, travelAmount) {
         const ux = dx / distance;
         const uy = dy / distance;
 
-        const streakLength = totalWarp * clamp(distance * 0.22, 18, 120);
+        const streakLength = totalWarp * clamp(distance * 0.13, 10, 68);
 
         if (direction === 1) {
           streakStartX = projection.x - ux * streakLength;
@@ -401,8 +401,8 @@ function drawStars(time, delta, warpAmount, travelAmount) {
       ctx.beginPath();
       ctx.moveTo(streakStartX, streakStartY);
       ctx.lineTo(streakEndX, streakEndY);
-      ctx.strokeStyle = `rgba(220, 230, 255, ${totalWarp * alpha * 0.88})`;
-      ctx.lineWidth = clamp(radius * 1.05, 0.5, 3.2);
+      ctx.strokeStyle = `rgba(225, 235, 255, ${totalWarp * alpha * 0.92})`;
+      ctx.lineWidth = clamp(radius * 1.0, 0.45, 2.8);
       ctx.stroke();
     }
 
