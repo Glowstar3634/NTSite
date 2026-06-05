@@ -65,24 +65,38 @@ body.traveling #field {
   position: fixed;
   inset: 0;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.5s ease;
-}
+  transition:
+    opacity 0.5s ease,
+    visibility 0s linear 0.5s;
+} 
 
 .scene.active {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
+  transition:
+    opacity 0.5s ease,
+    visibility 0s linear 0s;
+}
+
+.scene.no-motion,
+.scene.no-motion .space-object {
+  transition: none !important;
 }
 
 .space-object {
   --px: 0px;
   --py: 0px;
 
+  opacity: 1;
+  filter: blur(0);
   transform: translate3d(var(--px), var(--py), 0) scale(1);
   transition:
-    opacity 0.8s ease,
-    filter 0.9s ease,
-    transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.95s ease,
+    filter 1s ease,
+    transform 1.15s cubic-bezier(0.12, 0.85, 0.16, 1);
   will-change: transform, opacity, filter;
 }
 
@@ -92,56 +106,70 @@ body.loading .space-object {
   transform: translate3d(var(--px), calc(var(--py) + 32px), 0) scale(0.72);
 }
 
-/* Home elements physically fly toward the destination corner */
-.home-scene.exiting .space-object {
+
+
+/* ---------------- SPACE CAMERA TRANSITIONS ---------------- */
+
+/*
+  --travel-x and --travel-y point from the screen center toward
+  the selected corner button.
+
+  Example:
+  top-right button:
+    --travel-x is positive
+    --travel-y is negative
+
+  During zoom-in:
+    old home UI moves opposite that direction and gets huge
+    new page UI comes from that direction and grows into place
+*/
+
+.home-scene.zoom-in-out .space-object {
   opacity: 0;
-  filter: blur(18px);
+  filter: blur(24px);
   transform:
     translate3d(
-      calc(var(--px) + var(--travel-x, 0px) * 0.48),
-      calc(var(--py) + var(--travel-y, 0px) * 0.48),
+      calc(var(--px) - var(--travel-x, 0px) * 0.95),
+      calc(var(--py) - var(--travel-y, 0px) * 0.95),
       0
     )
-    scale(2.15);
+    scale(3.15);
 }
 
-/* Home returns from the galaxy direction */
-.home-scene.entering .space-object {
+.page-scene.zoom-in-in .space-object {
   opacity: 0;
-  filter: blur(18px);
+  filter: blur(24px);
   transform:
     translate3d(
-      calc(var(--px) + var(--travel-x, 0px) * 0.34),
-      calc(var(--py) + var(--travel-y, 0px) * 0.34),
+      calc(var(--px) + var(--travel-x, 0px) * 0.8),
+      calc(var(--py) + var(--travel-y, 0px) * 0.8),
       0
     )
-    scale(1.75);
+    scale(0.22);
 }
 
-/* Subpage content starts deep in space, then approaches */
-.page-scene.entering .space-object {
+.page-scene.zoom-out-out .space-object {
   opacity: 0;
-  filter: blur(18px);
+  filter: blur(24px);
   transform:
     translate3d(
-      calc(var(--px) - var(--travel-x, 0px) * 0.32),
-      calc(var(--py) - var(--travel-y, 0px) * 0.32),
+      calc(var(--px) + var(--travel-x, 0px) * 0.8),
+      calc(var(--py) + var(--travel-y, 0px) * 0.8),
       0
     )
-    scale(0.52);
+    scale(0.22);
 }
 
-/* Subpage exits back into space */
-.page-scene.exiting .space-object {
+.home-scene.zoom-out-in .space-object {
   opacity: 0;
-  filter: blur(18px);
+  filter: blur(24px);
   transform:
     translate3d(
-      calc(var(--px) + var(--travel-x, 0px) * 0.36),
-      calc(var(--py) + var(--travel-y, 0px) * 0.36),
+      calc(var(--px) - var(--travel-x, 0px) * 0.95),
+      calc(var(--py) - var(--travel-y, 0px) * 0.95),
       0
     )
-    scale(1.8);
+    scale(3.15);
 }
 
 /* ---------------- HOME ---------------- */

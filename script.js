@@ -27,8 +27,13 @@ const WARP_DURATION = 1900;
 let travelStart = null;
 let travelDuration = 1250;
 let travelFocus = { x: 0.5, y: 0.5 };
-let warpCenter = { x: 0.5, y: 0.5 };
+
+// 1 means zooming forward into a page.
+// -1 means zooming backward out to home.
+let travelDirection = 1;
+
 let activePage = null;
+let isTransitioning = false;
 
 const pages = {
   about: {
@@ -178,17 +183,14 @@ function getWarpAmount(time) {
   return 1 - easeOutCubic(progress);
 }
 
-function startTravel(focusX, focusY, duration = 1250) {
+function startTravel(focusX, focusY, duration = 1250, direction = 1) {
   travelFocus.x = focusX;
   travelFocus.y = focusY;
 
-  // During travel, lock the vanishing point to the destination.
-  // This makes the zoom feel like the intro warp, but aimed at the clicked corner.
-  warpCenter.x = focusX;
-  warpCenter.y = focusY;
-
+  travelDirection = direction;
   travelDuration = duration;
   travelStart = performance.now();
+
   document.body.classList.add("traveling");
 }
 
@@ -200,15 +202,9 @@ function getTravelAmount(time) {
   if (progress >= 1) {
     travelStart = null;
     document.body.classList.remove("traveling");
-
-    // After the warp finishes, return normal star projection to the screen center.
-    warpCenter.x = 0.5;
-    warpCenter.y = 0.5;
-
     return 0;
   }
 
-  // Same feeling as the intro: strongest at first, then smoothly settles.
   return 1 - easeOutCubic(progress);
 }
 
@@ -231,8 +227,8 @@ function setTravelCSSVarsFromElement(element) {
 }
 
 function projectStar(star, zOffset = 0) {
-  const centerX = canvas.width * warpCenter.x;
-  const centerY = canvas.height * warpCenter.y;
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
 
   const z = Math.max(0.045, star.z + zOffset);
   const perspective = 1 / z;
@@ -280,15 +276,58 @@ function drawBackground() {
 
 function drawStars(time, delta, warpAmount, travelAmount) {
   const totalWarp = Math.max(warpAmount, travelAmount);
+  const isTraveling = travelAmount > 0.001;
+
+  const focusX = isTraveling
+    ? canvas.width * travelFocus.x
+    : canvas.width / 2;
+
+  const focusY = isTraveling
+    ? canvas.height * travelFocus.y
+    : canvas.height / 2;
+
+  const direction = isTraveling ? travelDirection : 1;
 
   for (const star of stars) {
-    const oldProjection = projectStar(
-      star,
-      star.speed * delta * 46 * totalWarp
-    );
+    const oldProjection = projectStar(star);
 
-    const warpMultiplier = 1 + totalWarp * 280;
-    star.z -= star.speed * delta * warpMultiplier;
+    /*
+      Important:
+      We no longer move the projection center to the clicked corner.
+      Instead, the starfield remains continuous, while warp streaks are
+      drawn radially around the chosen focus point.
+    */
+
+    const normalSpeed = star.speed * delta;
+    const warpSpeed = star.speed * delta * (1 + totalWarp * 190);
+
+    if (isTraveling) {
+      const projection = projectStar(star);
+
+      const dx = projection.x - focusX;
+      const dy = projection.y - focusY;
+      const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+
+      const ux = dx / distance;
+      const uy = dy / distance;
+
+      /*
+        Zoom in:
+          stars move outward from the clicked destination.
+        Zoom out:
+          stars move inward toward the clicked destination.
+
+        This creates the visual direction without relocating the
+        entire starfield to the corner.
+      */
+
+      star.x += ux * direction * warpSpeed * 95;
+      star.y += uy * direction * warpSpeed * 95;
+
+      star.z -= direction * star.speed * delta * (1 + totalWarp * 110);
+    } else {
+      star.z -= normalSpeed;
+    }
 
     star.angle += star.orbitSpeed * delta;
     star.x += Math.cos(star.angle) * 0.0018 * delta;
@@ -298,15 +337,25 @@ function drawStars(time, delta, warpAmount, travelAmount) {
       resetStar(star, true);
     }
 
+    if (star.z >= 1.18) {
+      resetStar(star, false);
+      star.z = random(0.12, 0.32);
+    }
+
     const projection = projectStar(star);
 
     const offscreen =
-      projection.x < -240 ||
-      projection.x > canvas.width + 240 ||
-      projection.y < -240 ||
-      projection.y > canvas.height + 240;
+      projection.x < -320 ||
+      projection.x > canvas.width + 320 ||
+      projection.y < -320 ||
+      projection.y > canvas.height + 320;
 
     if (offscreen) {
+      /*
+        Do not let the screen go empty during zoom-out.
+        Recycle stars softly back into the field instead of waiting
+        for the whole projection to reset.
+      */
       resetStar(star, true);
       continue;
     }
@@ -314,14 +363,46 @@ function drawStars(time, delta, warpAmount, travelAmount) {
     const pulse = Math.sin(time * star.twinkle + star.x) * 0.18;
     const alpha = clamp(star.alpha + pulse, 0.15, 1);
 
-    const radius = clamp(star.size * projection.scale * 0.72, 0.32, 3.0);
+    const radius = clamp(star.size * projection.scale * 0.72, 0.3, 3.0);
 
     if (totalWarp > 0.03) {
+      let streakStartX = oldProjection.x;
+      let streakStartY = oldProjection.y;
+      let streakEndX = projection.x;
+      let streakEndY = projection.y;
+
+      /*
+        During page transitions, make streaks point cleanly around the
+        clicked corner instead of depending only on raw star position.
+      */
+      if (isTraveling) {
+        const dx = projection.x - focusX;
+        const dy = projection.y - focusY;
+        const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+
+        const ux = dx / distance;
+        const uy = dy / distance;
+
+        const streakLength = totalWarp * clamp(distance * 0.22, 18, 120);
+
+        if (direction === 1) {
+          streakStartX = projection.x - ux * streakLength;
+          streakStartY = projection.y - uy * streakLength;
+          streakEndX = projection.x;
+          streakEndY = projection.y;
+        } else {
+          streakStartX = projection.x + ux * streakLength;
+          streakStartY = projection.y + uy * streakLength;
+          streakEndX = projection.x;
+          streakEndY = projection.y;
+        }
+      }
+
       ctx.beginPath();
-      ctx.moveTo(oldProjection.x, oldProjection.y);
-      ctx.lineTo(projection.x, projection.y);
-      ctx.strokeStyle = `rgba(220, 230, 255, ${totalWarp * alpha * 0.95})`;
-      ctx.lineWidth = clamp(radius * 1.15, 0.55, 3.4);
+      ctx.moveTo(streakStartX, streakStartY);
+      ctx.lineTo(streakEndX, streakEndY);
+      ctx.strokeStyle = `rgba(220, 230, 255, ${totalWarp * alpha * 0.88})`;
+      ctx.lineWidth = clamp(radius * 1.05, 0.5, 3.2);
       ctx.stroke();
     }
 
@@ -414,10 +495,45 @@ function draw(time) {
   requestAnimationFrame(draw);
 }
 
+function prepareSceneForEntry(scene, entryClass) {
+  scene.classList.add("no-motion", "active", entryClass);
+
+  // Force the browser to apply the hidden starting transform.
+  scene.offsetHeight;
+
+  scene.classList.remove("no-motion");
+
+  requestAnimationFrame(() => {
+    scene.classList.remove(entryClass);
+  });
+}
+
+function hideSceneCleanly(scene, ...classesToRemove) {
+  /*
+    The scene is made invisible first with transitions disabled.
+    Then transform classes are removed while invisible.
+    This prevents the old UI from visibly moving back to center.
+  */
+
+  scene.classList.add("no-motion");
+  scene.classList.remove("active", ...classesToRemove);
+
+  // Force hidden/no-motion state.
+  scene.offsetHeight;
+
+  scene.classList.remove(...classesToRemove);
+
+  requestAnimationFrame(() => {
+    scene.classList.remove("no-motion");
+  });
+}
+
 function openPage(pageName, clickedButton) {
   if (!pages[pageName]) return;
   if (activePage === pageName) return;
+  if (isTransitioning) return;
 
+  isTransitioning = true;
   activePage = pageName;
 
   const page = pages[pageName];
@@ -428,41 +544,53 @@ function openPage(pageName, clickedButton) {
 
   const focus = setTravelCSSVarsFromElement(clickedButton);
 
-  pageScene.classList.add("active", "entering");
-  homeScene.classList.add("exiting");
+  prepareSceneForEntry(pageScene, "zoom-in-in");
 
-  startTravel(focus.x, focus.y, 1250);
+  requestAnimationFrame(() => {
+    homeScene.classList.add("zoom-in-out");
+  });
+
+  startTravel(focus.x, focus.y, 1200, 1);
 
   setTimeout(() => {
-    pageScene.classList.remove("entering");
-  }, 90);
+    hideSceneCleanly(homeScene, "zoom-in-out", "zoom-out-in");
 
-  setTimeout(() => {
-    homeScene.classList.remove("active", "exiting");
-  }, 850);
+    pageScene.classList.add("active");
+    pageScene.classList.remove("zoom-in-in", "zoom-out-out");
+
+    isTransitioning = false;
+  }, 1180);
 }
 
 function closePage() {
   if (!activePage) return;
+  if (isTransitioning) return;
+
+  isTransitioning = true;
 
   const matchingButton = document.querySelector(`[data-page="${activePage}"]`);
+
   const focus = matchingButton
     ? setTravelCSSVarsFromElement(matchingButton)
     : { x: 0.5, y: 0.5 };
 
-  pageScene.classList.add("exiting");
-  homeScene.classList.add("active", "entering");
+  prepareSceneForEntry(homeScene, "zoom-out-in");
 
-  startTravel(focus.x, focus.y, 1150);
+  requestAnimationFrame(() => {
+    pageScene.classList.add("zoom-out-out");
+  });
+
+  startTravel(focus.x, focus.y, 1200, -1);
 
   setTimeout(() => {
-    homeScene.classList.remove("entering");
-  }, 90);
+    hideSceneCleanly(pageScene, "zoom-out-out", "zoom-in-in");
 
-  setTimeout(() => {
-    pageScene.classList.remove("active", "exiting");
+    homeScene.classList.add("active");
+    homeScene.classList.remove("zoom-out-in", "zoom-in-out");
+
     activePage = null;
-  }, 850);
+    isTransitioning = false;
+  }, 1180);
 }
 
 document.querySelectorAll("[data-page]").forEach((button) => {
