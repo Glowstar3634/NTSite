@@ -12,39 +12,18 @@
 
   <div id="space-ui">
     <section id="homeScene" class="scene home-scene active">
-      <button class="corner-link top-left space-object" data-page="about" data-depth="16">
-        About
-      </button>
+      <div id="homeLinks"></div>
 
-      <button class="corner-link top-right space-object" data-page="projects" data-depth="16">
-        Projects
-      </button>
-
-      <button class="corner-link bottom-left space-object" data-page="writing" data-depth="16">
-        Writing
-      </button>
-
-      <button class="corner-link bottom-right space-object" data-page="math" data-depth="16">
-        Math Notes
-      </button>
-
-      <div class="identity space-object" data-depth="7">
-        <h1>NOVA</h1>
-        <p>TRAVIS</p>
+      <div id="homeIdentity" class="identity space-object" data-depth="7">
+        <div class="identity-inner">
+          <h1>N O V A</h1>
+          <p>TRAVIS</p>
+        </div>
       </div>
     </section>
 
-    <section id="pageScene" class="scene page-scene">
-      <button id="backButton" class="back-button space-object" data-depth="14">
-        ← Back
-      </button>
-
-      <article class="page-content space-object" data-depth="8">
-        <p id="pageKicker" class="page-kicker"></p>
-        <h2 id="pageTitle"></h2>
-        <div id="pageBody"></div>
-      </article>
-    </section>
+    <section id="sceneA" class="scene content-scene"></section>
+    <section id="sceneB" class="scene content-scene"></section>
   </div>
 
   <script src="script.js"></script>

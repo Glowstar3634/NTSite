@@ -1,14 +1,6 @@
 const canvas = document.getElementById("field");
 const ctx = canvas.getContext("2d");
 
-const homeScene = document.getElementById("homeScene");
-const pageScene = document.getElementById("pageScene");
-const backButton = document.getElementById("backButton");
-
-const pageKicker = document.getElementById("pageKicker");
-const pageTitle = document.getElementById("pageTitle");
-const pageBody = document.getElementById("pageBody");
-
 let stars = [];
 let nodes = [];
 
@@ -33,89 +25,367 @@ let travelFocus = { x: 0.5, y: 0.5 };
 let travelDirection = 1;
 
 let activePage = null;
-let isTransitioning = false;
 
-const pages = {
-  about: {
-    kicker: "Origin Point",
-    title: "About",
-    body: `
-      <p>
+const homeScene = document.getElementById("homeScene");
+const homeLinks = document.getElementById("homeLinks");
+const homeIdentity = document.getElementById("homeIdentity");
+
+const sceneA = document.getElementById("sceneA");
+const sceneB = document.getElementById("sceneB");
+
+const siteData = {
+  home: {
+    title: "NOVA",
+    subtitle: "TRAVIS",
+    links: [
+      { label: "About", target: "about", position: "top-left", depth: 16 },
+      { label: "Projects", target: "projects", position: "top-right", depth: 16 },
+      { label: "Writing", target: "writing", position: "bottom-left", depth: 16 },
+      { label: "Math Notes", target: "math", position: "bottom-right", depth: 16 }
+    ]
+  },
+
+  pages: {
+    about: {
+      kicker: "Origin Point",
+      title: "About",
+      intro: `
         I’m Nova Travis — a creator moving between mathematics, physics,
         writing, art, and technology.
-      </p>
-      <p>
-        This site is built like a personal universe: each section is not just
-        a page, but a region of thought. The goal is to make my work feel like
-        something you travel through, not something you simply scroll past.
-      </p>
-      <ul>
-        <li><strong>Core idea:</strong> structure and emotion are not opposites.</li>
-        <li><strong>Creative direction:</strong> math, physics, poetry, design, and invention.</li>
-        <li><strong>Current focus:</strong> building ideas that align technical depth with human meaning.</li>
-      </ul>
-    `
-  },
+      `,
+      sections: [
+        {
+          title: "Core Direction",
+          text: "I’m interested in places where structure and emotion meet: proofs, poems, software, physics, design, and systems that help people understand the world differently."
+        },
+        {
+          title: "This Site",
+          text: "This website is built like a personal universe. Each section is not just a page, but a region of thought you travel into."
+        }
+      ],
+      cards: []
+    },
 
-  projects: {
-    kicker: "Built Systems",
-    title: "Projects",
-    body: `
-      <p>
+    projects: {
+      kicker: "Built Systems",
+      title: "Projects",
+      intro: `
         My projects are where abstract ideas become usable systems, stories,
         tools, and ventures.
-      </p>
-      <ul>
-        <li>
-          <strong>I.A.R.</strong> — an accident reporting platform for automatic
-          evidence capture, encrypted driver verification, real-time accident
-          data exchange, and police-ready incident reports.
-        </li>
-        <li>
-          <strong>A-LIGN</strong> — a book project about how math and physics
-          concepts can map onto life, identity, perspective, and growth.
-        </li>
-        <li>
-          <strong>Market Intelligence Tool</strong> — a planned stock-market
-          news scraper and screener using machine learning and AI-based signals.
-        </li>
-      </ul>
-    `
-  },
+      `,
+      sections: [
+        {
+          title: "Project Philosophy",
+          text: "I like building things that feel conceptually deep but practically useful: technical systems with a strong identity."
+        }
+      ],
+      cards: [
+        {
+          title: "I.A.R.",
+          description: "An accident reporting platform for evidence capture, driver verification, and police-ready incident reports.",
+          target: "iar",
+          position: "top-right",
+          depth: 15
+        },
+        {
+          title: "A-LIGN",
+          description: "A book project connecting math and physics concepts to life, identity, growth, and perspective.",
+          target: "align",
+          position: "bottom-right",
+          depth: 14
+        },
+        {
+          title: "Market Intelligence",
+          description: "A planned stock-market news scraper and screener using machine learning and AI-based signals.",
+          target: "market-intelligence",
+          position: "bottom-left",
+          depth: 13
+        }
+      ]
+    },
 
-  writing: {
-    kicker: "Language Field",
-    title: "Writing",
-    body: `
-      <p>
-        My writing explores perception, emotion, ambition, regret, idealization,
-        and the strange way meaning changes depending on the observer.
-      </p>
-      <ul>
-        <li><strong>Paint</strong> — perspective, color, morality, and interpretation.</li>
-        <li><strong>Stone</strong> — idealization, memory, symbolism, and being frozen in someone else’s mind.</li>
-        <li><strong>Recipe</strong> — creation, doubt, distortion, and the fear of ruining something meaningful.</li>
-        <li><strong>Gaze of Greed</strong> — desire, projection, and emotional imbalance.</li>
-      </ul>
-    `
-  },
+    iar: {
+      kicker: "Project Galaxy",
+      title: "I.A.R.",
+      intro: `
+        I.A.R. is an accident reporting platform designed to make post-accident
+        information exchange faster, safer, and more reliable.
+      `,
+      sections: [
+        {
+          title: "Purpose",
+          text: "The idea is to help people in accidents capture evidence, exchange necessary information securely, and generate organized reports that can help insurance companies and law enforcement."
+        },
+        {
+          title: "Core Features",
+          text: "Possible features include automatic photo/video evidence capture, encrypted driver verification, accident timeline generation, and police-ready summaries."
+        },
+        {
+          title: "Why It Matters",
+          text: "After an accident, people are stressed and disorganized. I.A.R. tries to turn that chaos into structured, trustworthy information."
+        }
+      ],
+      cards: [
+        {
+          title: "Evidence Capture",
+          description: "Photos, videos, timestamps, location data, and contextual accident records.",
+          target: "iar-evidence",
+          position: "top-left",
+          depth: 14
+        },
+        {
+          title: "Encrypted Exchange",
+          description: "Safer ways for drivers to exchange identity and insurance information.",
+          target: "iar-exchange",
+          position: "bottom-right",
+          depth: 14
+        }
+      ]
+    },
 
-  math: {
-    kicker: "Concept Space",
-    title: "Math Notes",
-    body: `
-      <p>
-        This section is for the ideas I’m studying seriously and slowly:
-        topology, graph theory, differential forms, proofs, and the deeper
-        language behind structure.
-      </p>
-      <ul>
-        <li><strong>Topology</strong> — spaces, continuity, bases, quotients, and fundamental groups.</li>
-        <li><strong>Graph Theory</strong> — tournaments, matchings, orientations, Eulerian structure, and Hamiltonian paths.</li>
-        <li><strong>Differential Forms</strong> — wedge products, curl, divergence, and geometric calculus.</li>
-        <li><strong>Emergence</strong> — mathematical ways to describe when a collection of parts behaves like one object.</li>
-      </ul>
-    `
+    "iar-evidence": {
+      kicker: "I.A.R. Subsystem",
+      title: "Evidence Capture",
+      intro: `
+        This subsystem focuses on preserving accident evidence before it gets
+        lost, forgotten, or disputed.
+      `,
+      sections: [
+        {
+          title: "What It Records",
+          text: "Evidence could include images, video, timestamps, location, vehicle positions, road conditions, visible damage, and witness notes."
+        },
+        {
+          title: "Design Goal",
+          text: "The goal is not just to collect data, but to collect it in a structured way that later becomes useful for reports, claims, and legal clarity."
+        }
+      ],
+      cards: []
+    },
+
+    "iar-exchange": {
+      kicker: "I.A.R. Subsystem",
+      title: "Encrypted Exchange",
+      intro: `
+        This subsystem focuses on information exchange without making users
+        expose more personal information than necessary.
+      `,
+      sections: [
+        {
+          title: "Concept",
+          text: "Drivers could verify and exchange required accident information through a controlled encrypted flow instead of manually copying sensitive documents."
+        }
+      ],
+      cards: []
+    },
+
+    align: {
+      kicker: "Book Project",
+      title: "A-LIGN",
+      intro: `
+        A-LIGN is a book project about using math and physics as a language
+        for life, identity, decision-making, and growth.
+      `,
+      sections: [
+        {
+          title: "Main Idea",
+          text: "Concepts like vectors, forces, equilibrium, topology, entropy, and emergence can become metaphors for how people change and understand themselves."
+        },
+        {
+          title: "Tone",
+          text: "The project should feel intellectual but personal: rigorous enough to be meaningful, but human enough to be felt."
+        }
+      ],
+      cards: []
+    },
+
+    "market-intelligence": {
+      kicker: "Technical System",
+      title: "Market Intelligence",
+      intro: `
+        A planned tool for collecting market news, detecting patterns, and
+        helping screen stocks through AI-assisted signals.
+      `,
+      sections: [
+        {
+          title: "Possible Pipeline",
+          text: "Scrape news, classify sentiment, detect unusual volume or price movement, compare against historical patterns, and produce watchlist signals."
+        }
+      ],
+      cards: []
+    },
+
+    writing: {
+      kicker: "Language Field",
+      title: "Writing",
+      intro: `
+        My writing explores perception, emotion, ambition, regret,
+        idealization, and the strange way meaning changes depending on the observer.
+      `,
+      sections: [
+        {
+          title: "Writing Direction",
+          text: "A lot of my poems focus on projection: how we color the world, how we freeze people into symbols, and how private emotion changes public meaning."
+        }
+      ],
+      cards: [
+        {
+          title: "Paint",
+          description: "Perspective, color, morality, and interpretation.",
+          target: "paint",
+          position: "top-left",
+          depth: 14
+        },
+        {
+          title: "Stone",
+          description: "Idealization, symbolism, and being frozen in someone else’s mind.",
+          target: "stone",
+          position: "top-right",
+          depth: 14
+        },
+        {
+          title: "Recipe",
+          description: "Creation, doubt, distortion, and the fear of ruining something meaningful.",
+          target: "recipe",
+          position: "bottom-left",
+          depth: 14
+        }
+      ]
+    },
+
+    paint: {
+      kicker: "Poem",
+      title: "Paint",
+      intro: `
+        “Paint” is about how people interpret the same world through different
+        internal palettes.
+      `,
+      sections: [
+        {
+          title: "Core Lens",
+          text: "The poem treats morality, ambition, and joy as colors that people perceive differently. Meaning does not simply exist on the canvas; it emerges through the observer."
+        }
+      ],
+      cards: []
+    },
+
+    stone: {
+      kicker: "Poem",
+      title: "Stone",
+      intro: `
+        “Stone” can be read as a poem about idealization, memory, and symbolic
+        imprisonment.
+      `,
+      sections: [
+        {
+          title: "Core Lens",
+          text: "The statue becomes a metaphor for what happens when someone is turned into an idea. They may be honored, but they are also frozen."
+        }
+      ],
+      cards: []
+    },
+
+    recipe: {
+      kicker: "Poem",
+      title: "Recipe",
+      intro: `
+        “Recipe” explores the anxiety of creation and the fear that something
+        meaningful has been ruined in the making.
+      `,
+      sections: [
+        {
+          title: "Core Lens",
+          text: "The poem uses cooking as a metaphor for thought, memory, authorship, and self-doubt."
+        }
+      ],
+      cards: []
+    },
+
+    math: {
+      kicker: "Concept Space",
+      title: "Math Notes",
+      intro: `
+        This section is for topology, graph theory, differential forms, proofs,
+        and mathematical ways of describing structure.
+      `,
+      sections: [
+        {
+          title: "Purpose",
+          text: "These notes are for serious learning, but also for developing new conceptual connections between math, physics, and emergence."
+        }
+      ],
+      cards: [
+        {
+          title: "Topology",
+          description: "Spaces, continuity, bases, quotients, and fundamental groups.",
+          target: "topology",
+          position: "top-left",
+          depth: 14
+        },
+        {
+          title: "Graph Theory",
+          description: "Tournaments, matchings, orientations, Eulerian structure, and Hamiltonian paths.",
+          target: "graph-theory",
+          position: "top-right",
+          depth: 14
+        },
+        {
+          title: "Emergence",
+          description: "When a collection of parts behaves approximately as one object.",
+          target: "emergence",
+          position: "bottom-right",
+          depth: 14
+        }
+      ]
+    },
+
+    topology: {
+      kicker: "Math Region",
+      title: "Topology",
+      intro: `
+        Topology studies the structure of spaces through continuity, openness,
+        connectedness, compactness, and deformation.
+      `,
+      sections: [
+        {
+          title: "Current Focus",
+          text: "Bases, product topologies, quotient spaces, fundamental groups, and the beginnings of knot theory."
+        }
+      ],
+      cards: []
+    },
+
+    "graph-theory": {
+      kicker: "Math Region",
+      title: "Graph Theory",
+      intro: `
+        Graph theory studies relationships through vertices, edges, directions,
+        paths, cycles, and structural constraints.
+      `,
+      sections: [
+        {
+          title: "Current Focus",
+          text: "Tournaments, Hamiltonian paths, strong orientations, matchings, closures, and Eulerian structure."
+        }
+      ],
+      cards: []
+    },
+
+    emergence: {
+      kicker: "Research Thread",
+      title: "Emergence",
+      intro: `
+        Emergence asks when many interacting parts can be treated as one
+        persistent effective object.
+      `,
+      sections: [
+        {
+          title: "Working Definition",
+          text: "A collection of parts exhibits emergence when it behaves approximately as one object through persistence over time, internal coupling, and a reduced effective description."
+        }
+      ],
+      cards: []
+    }
   }
 };
 
@@ -528,78 +798,270 @@ function hideSceneCleanly(scene, ...classesToRemove) {
   });
 }
 
-function openPage(pageName, clickedButton) {
-  if (!pages[pageName]) return;
-  if (activePage === pageName) return;
-  if (isTransitioning) return;
+let currentScene = homeScene;
+let currentPageId = "home";
+let routeStack = [
+  {
+    id: "home",
+    focus: { x: 0.5, y: 0.5 }
+  }
+];
 
-  isTransitioning = true;
-  activePage = pageName;
+let isTransitioning = false;
 
-  const page = pages[pageName];
+function escapeHTML(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
-  pageKicker.textContent = page.kicker;
-  pageTitle.textContent = page.title;
-  pageBody.innerHTML = page.body;
+function renderHome() {
+  homeIdentity.querySelector("h1").textContent = siteData.home.title;
+  homeIdentity.querySelector("p").textContent = siteData.home.subtitle;
 
-  const focus = setTravelCSSVarsFromElement(clickedButton);
+  homeLinks.innerHTML = siteData.home.links
+    .map((link) => {
+      return `
+        <button
+          class="corner-link ${link.position} space-object"
+          data-link="${escapeHTML(link.target)}"
+          data-depth="${link.depth ?? 16}"
+        >
+          ${escapeHTML(link.label)}
+        </button>
+      `;
+    })
+    .join("");
+}
 
-  prepareSceneForEntry(pageScene, "zoom-in-in");
+function renderContentScene(scene, pageId) {
+  const page = siteData.pages[pageId];
+
+  if (!page) {
+    console.warn(`Page "${pageId}" does not exist.`);
+    return;
+  }
+
+  const sectionsHTML = (page.sections ?? [])
+    .map((section) => {
+      return `
+        <li>
+          <strong>${escapeHTML(section.title)}</strong><br />
+          ${escapeHTML(section.text)}
+        </li>
+      `;
+    })
+    .join("");
+
+  const cardsHTML = (page.cards ?? [])
+    .map((card) => {
+      const hasTarget = Boolean(card.target);
+
+      return `
+        <button
+          class="space-card orbit-${escapeHTML(card.position ?? "right")} space-object"
+          data-depth="${card.depth ?? 13}"
+          ${hasTarget ? `data-link="${escapeHTML(card.target)}"` : "disabled"}
+        >
+          <h3>${escapeHTML(card.title)}</h3>
+          <p>${escapeHTML(card.description)}</p>
+        </button>
+      `;
+    })
+    .join("");
+
+  scene.innerHTML = `
+    <button class="back-button space-object" data-back data-depth="14">
+      ← Back
+    </button>
+
+    <div class="content-layout">
+      <article class="space-panel space-object" data-depth="8">
+        <p class="page-kicker">${escapeHTML(page.kicker)}</p>
+        <h2>${escapeHTML(page.title)}</h2>
+        <p>${page.intro}</p>
+
+        ${
+          sectionsHTML
+            ? `<ul>${sectionsHTML}</ul>`
+            : ""
+        }
+      </article>
+
+      <div class="node-cloud">
+        ${cardsHTML}
+      </div>
+    </div>
+  `;
+}
+
+function getSpareScene() {
+  if (currentScene === sceneA) return sceneB;
+  return sceneA;
+}
+
+function setTravelCSSVarsFromFocus(focus) {
+  const dx = (focus.x - 0.5) * window.innerWidth;
+  const dy = (focus.y - 0.5) * window.innerHeight;
+
+  document.documentElement.style.setProperty("--travel-x", `${dx}px`);
+  document.documentElement.style.setProperty("--travel-y", `${dy}px`);
+}
+
+function setTravelCSSVarsFromElement(element) {
+  const rect = element.getBoundingClientRect();
+
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+
+  const focus = {
+    x: centerX / window.innerWidth,
+    y: centerY / window.innerHeight
+  };
+
+  setTravelCSSVarsFromFocus(focus);
+
+  return focus;
+}
+
+function prepareSceneForEntry(scene, entryClass) {
+  scene.classList.add("no-motion", "active", entryClass);
+
+  scene.offsetHeight;
+
+  scene.classList.remove("no-motion");
 
   requestAnimationFrame(() => {
-    homeScene.classList.add("zoom-in-out");
+    scene.classList.remove(entryClass);
+  });
+}
+
+function hideSceneCleanly(scene, classesToRemove = [], clearContent = false) {
+  scene.classList.add("no-motion");
+  scene.classList.remove("active", ...classesToRemove);
+
+  scene.offsetHeight;
+
+  scene.classList.remove(...classesToRemove);
+
+  if (clearContent && scene !== homeScene) {
+    scene.innerHTML = "";
+  }
+
+  requestAnimationFrame(() => {
+    scene.classList.remove("no-motion");
+  });
+}
+
+function navigateTo(pageId, clickedElement) {
+  if (isTransitioning) return;
+  if (!siteData.pages[pageId]) return;
+
+  isTransitioning = true;
+
+  const fromScene = currentScene;
+  const toScene = getSpareScene();
+
+  renderContentScene(toScene, pageId);
+
+  const focus = setTravelCSSVarsFromElement(clickedElement);
+
+  prepareSceneForEntry(toScene, "zoom-forward-in");
+
+  requestAnimationFrame(() => {
+    fromScene.classList.add("zoom-forward-out");
   });
 
   startTravel(focus.x, focus.y, 1200, 1);
 
   setTimeout(() => {
-    hideSceneCleanly(homeScene, "zoom-in-out", "zoom-out-in");
+    hideSceneCleanly(
+      fromScene,
+      ["zoom-forward-out", "zoom-back-in", "zoom-forward-in", "zoom-back-out"],
+      fromScene !== homeScene
+    );
 
-    pageScene.classList.add("active");
-    pageScene.classList.remove("zoom-in-in", "zoom-out-out");
+    toScene.classList.add("active");
+    toScene.classList.remove("zoom-forward-in", "zoom-back-out");
+
+    currentScene = toScene;
+    currentPageId = pageId;
+
+    routeStack.push({
+      id: pageId,
+      focus
+    });
 
     isTransitioning = false;
   }, 1180);
 }
 
-function closePage() {
-  if (!activePage) return;
+function goBack() {
   if (isTransitioning) return;
+  if (routeStack.length <= 1) return;
 
   isTransitioning = true;
 
-  const matchingButton = document.querySelector(`[data-page="${activePage}"]`);
+  const currentEntry = routeStack[routeStack.length - 1];
+  const previousEntry = routeStack[routeStack.length - 2];
 
-  const focus = matchingButton
-    ? setTravelCSSVarsFromElement(matchingButton)
-    : { x: 0.5, y: 0.5 };
+  const fromScene = currentScene;
+  const toScene = previousEntry.id === "home" ? homeScene : getSpareScene();
 
-  prepareSceneForEntry(homeScene, "zoom-out-in");
+  setTravelCSSVarsFromFocus(currentEntry.focus);
+
+  if (previousEntry.id !== "home") {
+    renderContentScene(toScene, previousEntry.id);
+  }
+
+  prepareSceneForEntry(toScene, "zoom-back-in");
 
   requestAnimationFrame(() => {
-    pageScene.classList.add("zoom-out-out");
+    fromScene.classList.add("zoom-back-out");
   });
 
-  startTravel(focus.x, focus.y, 1200, -1);
+  startTravel(currentEntry.focus.x, currentEntry.focus.y, 1200, -1);
 
   setTimeout(() => {
-    hideSceneCleanly(pageScene, "zoom-out-out", "zoom-in-in");
+    hideSceneCleanly(
+      fromScene,
+      ["zoom-back-out", "zoom-forward-in", "zoom-forward-out", "zoom-back-in"],
+      fromScene !== homeScene
+    );
 
-    homeScene.classList.add("active");
-    homeScene.classList.remove("zoom-out-in", "zoom-in-out");
+    toScene.classList.add("active");
+    toScene.classList.remove("zoom-back-in", "zoom-forward-out");
 
-    activePage = null;
+    routeStack.pop();
+
+    currentScene = toScene;
+    currentPageId = previousEntry.id;
+
     isTransitioning = false;
   }, 1180);
 }
 
-document.querySelectorAll("[data-page]").forEach((button) => {
-  button.addEventListener("click", () => {
-    openPage(button.dataset.page, button);
-  });
+document.addEventListener("click", (event) => {
+  const backButton = event.target.closest("[data-back]");
+  if (backButton) {
+    goBack();
+    return;
+  }
+
+  const link = event.target.closest("[data-link]");
+  if (link) {
+    navigateTo(link.dataset.link, link);
+  }
 });
 
-backButton.addEventListener("click", closePage);
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    goBack();
+  }
+});
 
 window.addEventListener("mousemove", (event) => {
   mouse.targetX = (event.clientX / window.innerWidth - 0.5) * -10;
@@ -613,16 +1075,11 @@ window.addEventListener("mouseleave", () => {
 
 window.addEventListener("resize", resizeCanvas);
 
-window.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") {
-    closePage();
-  }
-});
+renderHome();
 
 resizeCanvas();
 requestAnimationFrame(draw);
 
-// Black screen first, then physical warp-in reveal.
 setTimeout(() => {
   document.body.classList.remove("loading");
   document.body.classList.add("warping");
