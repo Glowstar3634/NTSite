@@ -2,7 +2,6 @@ const canvas = document.getElementById("field");
 const ctx = canvas.getContext("2d");
 
 let stars = [];
-let nodes = [];
 
 const mouse = {
   x: 0,
@@ -33,361 +32,11 @@ const homeIdentity = document.getElementById("homeIdentity");
 const sceneA = document.getElementById("sceneA");
 const sceneB = document.getElementById("sceneB");
 
-const siteData = {
-  home: {
-    title: "NOVA",
-    subtitle: "TRAVIS",
-    links: [
-      { label: "About", target: "about", position: "top-left", depth: 16 },
-      { label: "Projects", target: "projects", position: "top-right", depth: 16 },
-      { label: "Writing", target: "writing", position: "bottom-left", depth: 16 },
-      { label: "Math Notes", target: "math", position: "bottom-right", depth: 16 }
-    ]
-  },
+const siteData = window.siteData;
 
-  pages: {
-    about: {
-      kicker: "Origin Point",
-      title: "About",
-      intro: `
-        I’m Nova Travis — a creator moving between mathematics, physics,
-        writing, art, and technology.
-      `,
-      sections: [
-        {
-          title: "Core Direction",
-          text: "I’m interested in places where structure and emotion meet: proofs, poems, software, physics, design, and systems that help people understand the world differently."
-        },
-        {
-          title: "This Site",
-          text: "This website is built like a personal universe. Each section is not just a page, but a region of thought you travel into."
-        }
-      ],
-      cards: []
-    },
-
-    projects: {
-      kicker: "Built Systems",
-      title: "Projects",
-      intro: `
-        My projects are where abstract ideas become usable systems, stories,
-        tools, and ventures.
-      `,
-      sections: [
-        {
-          title: "Project Philosophy",
-          text: "I like building things that feel conceptually deep but practically useful: technical systems with a strong identity."
-        }
-      ],
-      cards: [
-        {
-          title: "I.A.R.",
-          description: "An accident reporting platform for evidence capture, driver verification, and police-ready incident reports.",
-          target: "iar",
-          position: "top-right",
-          depth: 15
-        },
-        {
-          title: "A-LIGN",
-          description: "A book project connecting math and physics concepts to life, identity, growth, and perspective.",
-          target: "align",
-          position: "bottom-right",
-          depth: 14
-        },
-        {
-          title: "Market Intelligence",
-          description: "A planned stock-market news scraper and screener using machine learning and AI-based signals.",
-          target: "market-intelligence",
-          position: "bottom-left",
-          depth: 13
-        }
-      ]
-    },
-
-    iar: {
-      kicker: "Project Galaxy",
-      title: "I.A.R.",
-      intro: `
-        I.A.R. is an accident reporting platform designed to make post-accident
-        information exchange faster, safer, and more reliable.
-      `,
-      sections: [
-        {
-          title: "Purpose",
-          text: "The idea is to help people in accidents capture evidence, exchange necessary information securely, and generate organized reports that can help insurance companies and law enforcement."
-        },
-        {
-          title: "Core Features",
-          text: "Possible features include automatic photo/video evidence capture, encrypted driver verification, accident timeline generation, and police-ready summaries."
-        },
-        {
-          title: "Why It Matters",
-          text: "After an accident, people are stressed and disorganized. I.A.R. tries to turn that chaos into structured, trustworthy information."
-        }
-      ],
-      cards: [
-        {
-          title: "Evidence Capture",
-          description: "Photos, videos, timestamps, location data, and contextual accident records.",
-          target: "iar-evidence",
-          position: "top-left",
-          depth: 14
-        },
-        {
-          title: "Encrypted Exchange",
-          description: "Safer ways for drivers to exchange identity and insurance information.",
-          target: "iar-exchange",
-          position: "bottom-right",
-          depth: 14
-        }
-      ]
-    },
-
-    "iar-evidence": {
-      kicker: "I.A.R. Subsystem",
-      title: "Evidence Capture",
-      intro: `
-        This subsystem focuses on preserving accident evidence before it gets
-        lost, forgotten, or disputed.
-      `,
-      sections: [
-        {
-          title: "What It Records",
-          text: "Evidence could include images, video, timestamps, location, vehicle positions, road conditions, visible damage, and witness notes."
-        },
-        {
-          title: "Design Goal",
-          text: "The goal is not just to collect data, but to collect it in a structured way that later becomes useful for reports, claims, and legal clarity."
-        }
-      ],
-      cards: []
-    },
-
-    "iar-exchange": {
-      kicker: "I.A.R. Subsystem",
-      title: "Encrypted Exchange",
-      intro: `
-        This subsystem focuses on information exchange without making users
-        expose more personal information than necessary.
-      `,
-      sections: [
-        {
-          title: "Concept",
-          text: "Drivers could verify and exchange required accident information through a controlled encrypted flow instead of manually copying sensitive documents."
-        }
-      ],
-      cards: []
-    },
-
-    align: {
-      kicker: "Book Project",
-      title: "A-LIGN",
-      intro: `
-        A-LIGN is a book project about using math and physics as a language
-        for life, identity, decision-making, and growth.
-      `,
-      sections: [
-        {
-          title: "Main Idea",
-          text: "Concepts like vectors, forces, equilibrium, topology, entropy, and emergence can become metaphors for how people change and understand themselves."
-        },
-        {
-          title: "Tone",
-          text: "The project should feel intellectual but personal: rigorous enough to be meaningful, but human enough to be felt."
-        }
-      ],
-      cards: []
-    },
-
-    "market-intelligence": {
-      kicker: "Technical System",
-      title: "Market Intelligence",
-      intro: `
-        A planned tool for collecting market news, detecting patterns, and
-        helping screen stocks through AI-assisted signals.
-      `,
-      sections: [
-        {
-          title: "Possible Pipeline",
-          text: "Scrape news, classify sentiment, detect unusual volume or price movement, compare against historical patterns, and produce watchlist signals."
-        }
-      ],
-      cards: []
-    },
-
-    writing: {
-      kicker: "Language Field",
-      title: "Writing",
-      intro: `
-        My writing explores perception, emotion, ambition, regret,
-        idealization, and the strange way meaning changes depending on the observer.
-      `,
-      sections: [
-        {
-          title: "Writing Direction",
-          text: "A lot of my poems focus on projection: how we color the world, how we freeze people into symbols, and how private emotion changes public meaning."
-        }
-      ],
-      cards: [
-        {
-          title: "Paint",
-          description: "Perspective, color, morality, and interpretation.",
-          target: "paint",
-          position: "top-left",
-          depth: 14
-        },
-        {
-          title: "Stone",
-          description: "Idealization, symbolism, and being frozen in someone else’s mind.",
-          target: "stone",
-          position: "top-right",
-          depth: 14
-        },
-        {
-          title: "Recipe",
-          description: "Creation, doubt, distortion, and the fear of ruining something meaningful.",
-          target: "recipe",
-          position: "bottom-left",
-          depth: 14
-        }
-      ]
-    },
-
-    paint: {
-      kicker: "Poem",
-      title: "Paint",
-      intro: `
-        “Paint” is about how people interpret the same world through different
-        internal palettes.
-      `,
-      sections: [
-        {
-          title: "Core Lens",
-          text: "The poem treats morality, ambition, and joy as colors that people perceive differently. Meaning does not simply exist on the canvas; it emerges through the observer."
-        }
-      ],
-      cards: []
-    },
-
-    stone: {
-      kicker: "Poem",
-      title: "Stone",
-      intro: `
-        “Stone” can be read as a poem about idealization, memory, and symbolic
-        imprisonment.
-      `,
-      sections: [
-        {
-          title: "Core Lens",
-          text: "The statue becomes a metaphor for what happens when someone is turned into an idea. They may be honored, but they are also frozen."
-        }
-      ],
-      cards: []
-    },
-
-    recipe: {
-      kicker: "Poem",
-      title: "Recipe",
-      intro: `
-        “Recipe” explores the anxiety of creation and the fear that something
-        meaningful has been ruined in the making.
-      `,
-      sections: [
-        {
-          title: "Core Lens",
-          text: "The poem uses cooking as a metaphor for thought, memory, authorship, and self-doubt."
-        }
-      ],
-      cards: []
-    },
-
-    math: {
-      kicker: "Concept Space",
-      title: "Math Notes",
-      intro: `
-        This section is for topology, graph theory, differential forms, proofs,
-        and mathematical ways of describing structure.
-      `,
-      sections: [
-        {
-          title: "Purpose",
-          text: "These notes are for serious learning, but also for developing new conceptual connections between math, physics, and emergence."
-        }
-      ],
-      cards: [
-        {
-          title: "Topology",
-          description: "Spaces, continuity, bases, quotients, and fundamental groups.",
-          target: "topology",
-          position: "top-left",
-          depth: 14
-        },
-        {
-          title: "Graph Theory",
-          description: "Tournaments, matchings, orientations, Eulerian structure, and Hamiltonian paths.",
-          target: "graph-theory",
-          position: "top-right",
-          depth: 14
-        },
-        {
-          title: "Emergence",
-          description: "When a collection of parts behaves approximately as one object.",
-          target: "emergence",
-          position: "bottom-right",
-          depth: 14
-        }
-      ]
-    },
-
-    topology: {
-      kicker: "Math Region",
-      title: "Topology",
-      intro: `
-        Topology studies the structure of spaces through continuity, openness,
-        connectedness, compactness, and deformation.
-      `,
-      sections: [
-        {
-          title: "Current Focus",
-          text: "Bases, product topologies, quotient spaces, fundamental groups, and the beginnings of knot theory."
-        }
-      ],
-      cards: []
-    },
-
-    "graph-theory": {
-      kicker: "Math Region",
-      title: "Graph Theory",
-      intro: `
-        Graph theory studies relationships through vertices, edges, directions,
-        paths, cycles, and structural constraints.
-      `,
-      sections: [
-        {
-          title: "Current Focus",
-          text: "Tournaments, Hamiltonian paths, strong orientations, matchings, closures, and Eulerian structure."
-        }
-      ],
-      cards: []
-    },
-
-    emergence: {
-      kicker: "Research Thread",
-      title: "Emergence",
-      intro: `
-        Emergence asks when many interacting parts can be treated as one
-        persistent effective object.
-      `,
-      sections: [
-        {
-          title: "Working Definition",
-          text: "A collection of parts exhibits emergence when it behaves approximately as one object through persistence over time, internal coupling, and a reduced effective description."
-        }
-      ],
-      cards: []
-    }
-  }
-};
+if (!siteData) {
+  throw new Error("siteData.js did not load. Make sure it appears before script.js in index.html.");
+}
 
 function random(min, max) {
   return Math.random() * (max - min) + min;
@@ -421,7 +70,6 @@ function resizeCanvas() {
 
   const area = canvas.width * canvas.height;
   const starCount = Math.min(520, Math.floor(area / 2600));
-  const nodeCount = Math.min(70, Math.floor(area / 23000));
 
   stars = Array.from({ length: starCount }, () => {
     const star = {};
@@ -429,14 +77,6 @@ function resizeCanvas() {
     return star;
   });
 
-  nodes = Array.from({ length: nodeCount }, () => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    vx: random(-0.055, 0.055),
-    vy: random(-0.055, 0.055),
-    size: random(1, 2.2),
-    depth: random(0.25, 1)
-  }));
 }
 
 function getWarpAmount(time) {
@@ -690,52 +330,6 @@ function drawStars(time, delta, warpAmount, travelAmount) {
   }
 }
 
-function drawNodes(delta) {
-  for (const p of nodes) {
-    p.x += p.vx * delta;
-    p.y += p.vy * delta;
-
-    if (p.x < -80) p.x = canvas.width + 80;
-    if (p.x > canvas.width + 80) p.x = -80;
-    if (p.y < -80) p.y = canvas.height + 80;
-    if (p.y > canvas.height + 80) p.y = -80;
-  }
-
-  for (let i = 0; i < nodes.length; i++) {
-    const a = nodes[i];
-
-    const ax = a.x + mouse.x * a.depth * 35;
-    const ay = a.y + mouse.y * a.depth * 35;
-
-    ctx.beginPath();
-    ctx.arc(ax, ay, a.size, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(180, 190, 255, 0.42)";
-    ctx.fill();
-
-    for (let j = i + 1; j < nodes.length; j++) {
-      const b = nodes[j];
-
-      const bx = b.x + mouse.x * b.depth * 35;
-      const by = b.y + mouse.y * b.depth * 35;
-
-      const dx = ax - bx;
-      const dy = ay - by;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance < 130) {
-        const opacity = 1 - distance / 130;
-
-        ctx.beginPath();
-        ctx.moveTo(ax, ay);
-        ctx.lineTo(bx, by);
-        ctx.strokeStyle = `rgba(120, 135, 255, ${opacity * 0.2})`;
-        ctx.lineWidth = 0.55;
-        ctx.stroke();
-      }
-    }
-  }
-}
-
 function updateSpaceObjectParallax() {
   const objects = document.querySelectorAll(".space-object");
 
@@ -744,6 +338,66 @@ function updateSpaceObjectParallax() {
 
     object.style.setProperty("--px", `${mouse.x * depth}px`);
     object.style.setProperty("--py", `${mouse.y * depth}px`);
+  }
+}
+
+function updateStackBends() {
+  const stacks = document.querySelectorAll("[data-curved-stack]");
+
+  for (const stack of stacks) {
+    const items = [...stack.querySelectorAll(".stack-item")];
+
+    if (!items.length) continue;
+
+    const stackRect = stack.getBoundingClientRect();
+    const stackCenterY = stackRect.top + stackRect.height / 2;
+
+    let closestItem = null;
+    let closestDistance = Infinity;
+
+    for (const item of items) {
+      const rect = item.getBoundingClientRect();
+      const itemCenterY = rect.top + rect.height / 2;
+      const distance = Math.abs(itemCenterY - stackCenterY);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestItem = item;
+      }
+    }
+
+    for (const item of items) {
+      const rect = item.getBoundingClientRect();
+      const itemCenterY = rect.top + rect.height / 2;
+
+      const rawOffset = (itemCenterY - stackCenterY) / (stackRect.height / 2);
+      const offset = clamp(rawOffset, -1.7, 1.7);
+      const distanceFromCenter = Math.abs(offset);
+
+      /*
+        Positive X pushes the stack RIGHT.
+        This bends the wheel away from the main panel.
+      */
+      const bendX = -Math.pow(distanceFromCenter, 1.8) * 128;
+
+      /*
+        Above and below the center rotate in opposite directions,
+        making the stack feel like it is rotating around the centered tab.
+      */
+      const rotateZ = offset * -9;
+      const rotateY = offset * 24;
+
+      const scale = 1 - Math.min(distanceFromCenter * 0.075, 0.16);
+      const opacity = 1 - Math.min(distanceFromCenter * 0.18, 0.34);
+
+      item.style.setProperty("--stack-x", `${bendX}px`);
+      item.style.setProperty("--stack-rotate", `${rotateZ}deg`);
+      item.style.setProperty("--stack-tilt", `${rotateY}deg`);
+      item.style.setProperty("--stack-scale", scale);
+      item.style.setProperty("--stack-opacity", opacity);
+
+      item.classList.toggle("stack-item-center", item === closestItem);
+    }
   }
 }
 
@@ -759,8 +413,8 @@ function draw(time) {
 
   drawBackground();
   drawStars(time, delta, warpAmount, travelAmount);
-  drawNodes(delta);
   updateSpaceObjectParallax();
+  updateStackBends();
 
   requestAnimationFrame(draw);
 }
@@ -857,28 +511,96 @@ function renderContentScene(scene, pageId) {
     .join("");
 
   const cardsHTML = (page.cards ?? [])
-    .map((card) => {
-      const hasTarget = Boolean(card.target);
+  .map((card) => {
+    const hasTarget = Boolean(card.target);
+    const hasLink = Boolean(card.link);
+
+    const cardInner = `
+      <h3>${escapeHTML(card.title)}</h3>
+      <p>${escapeHTML(card.description)}</p>
+    `;
+
+    if (hasLink) {
+      const opensNewTab = card.link.startsWith("http");
 
       return `
-        <button
+        <a
           class="space-card orbit-${escapeHTML(card.position ?? "right")} space-object"
+          href="${escapeHTML(card.link)}"
+          ${opensNewTab ? `target="_blank" rel="noopener noreferrer"` : ""}
           data-depth="${card.depth ?? 13}"
-          ${hasTarget ? `data-link="${escapeHTML(card.target)}"` : "disabled"}
         >
-          <h3>${escapeHTML(card.title)}</h3>
-          <p>${escapeHTML(card.description)}</p>
-        </button>
+          ${cardInner}
+        </a>
       `;
-    })
-    .join("");
+    }
 
-  scene.innerHTML = `
-    <button class="back-button space-object" data-back data-depth="14">
-      ← Back
-    </button>
+    return `
+      <button
+        class="space-card orbit-${escapeHTML(card.position ?? "right")} space-object"
+        data-depth="${card.depth ?? 13}"
+        ${hasTarget ? `data-link="${escapeHTML(card.target)}"` : "disabled"}
+      >
+        ${cardInner}
+      </button>
+    `;
+  })
+  .join("");
 
-    <div class="content-layout">
+  const stackItems = page.stack?.items ?? [];
+
+  const stackHTML = stackItems.length
+    ? `
+      <aside
+        class="curved-stack space-object"
+        data-curved-stack
+        data-depth="${page.stack?.depth ?? 10}"
+      >
+        ${
+          page.stack?.label
+            ? `<p class="stack-label">${escapeHTML(page.stack.label)}</p>`
+            : ""
+        }
+
+        ${stackItems
+          .map((item, index) => {
+            return `
+              <button
+                class="stack-item"
+                ${item.target ? `data-link="${escapeHTML(item.target)}"` : "disabled"}
+              >
+                <h3>${escapeHTML(item.title)}</h3>
+                ${
+                  item.description
+                    ? `<p>${escapeHTML(item.description)}</p>`
+                    : ""
+                }
+              </button>
+            `;
+          })
+          .join("")}
+      </aside>
+    `
+    : "";
+
+  const poemHTML = page.poem
+    ? `
+      <article class="poem-panel space-object" data-depth="${page.poem.depth ?? 8}">
+        <p class="poem-subtitle">${escapeHTML(page.kicker ?? "Poem")}</p>
+        <h2 class="poem-title">${escapeHTML(page.title)}</h2>
+        <div class="poem-text">${escapeHTML(page.poem.text)}</div>
+
+        ${
+          page.poem.note
+            ? `<p class="poem-note">${escapeHTML(page.poem.note)}</p>`
+            : ""
+        }
+      </article>
+    `
+    : "";
+
+  const standardPanelHTML = !page.poem
+    ? `
       <article class="space-panel space-object" data-depth="8">
         <p class="page-kicker">${escapeHTML(page.kicker)}</p>
         <h2>${escapeHTML(page.title)}</h2>
@@ -890,10 +612,22 @@ function renderContentScene(scene, pageId) {
             : ""
         }
       </article>
+    `
+    : "";
+
+  scene.innerHTML = `
+    <button class="back-button space-object" data-back data-depth="14">
+      ← Back
+    </button>
+
+    <div class="content-layout ${stackHTML ? "has-stack" : ""}">
+      ${poemHTML || standardPanelHTML}
 
       <div class="node-cloud">
         ${cardsHTML}
       </div>
+
+      ${stackHTML}
     </div>
   `;
 }
