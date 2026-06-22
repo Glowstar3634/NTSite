@@ -372,7 +372,7 @@ window.siteData = {
         },
         {
           title: "Daily Percentage Change",
-          text: "To measure actuator movement, I used Daily Percentage Change, or DPC: the total vertical movement of the valve signal over a day. In continuous form, DPC = ∫|g'(t)|dt. In discrete form, it becomes a sum of absolute changes between consecutive smoothed values."
+          text: "To measure actuator movement, I used Daily Percentage Change, or DPC: the total vertical movement of the valve signal over a day. This can be calculated both continuously and discretely, the formulas I used for both are shown in an image."
         },
         {
           title: "Energy Result",
@@ -390,6 +390,18 @@ window.siteData = {
           target: "kepmore",
           position: "top-right",
           depth: 14
+        }
+      ],
+      media: [
+        {
+          src: "media/nts_emaGraph.png",
+          alt: "Model Prediction EMA Smoothing Graph Example",
+          caption: "Energy saving EMA adjustments overlaying a theoretical model prediction over a day."
+        },
+        {
+          src: "media/nts_DPC.png",
+          alt: "DPC calculations",
+          caption: "Daily Percentage Change (DPC) computations used to evaluate saved energy."
         }
       ]
     },
@@ -887,46 +899,46 @@ window.siteData = {
     //All poems end
 
     math: {
-      kicker: "Concept Space",
-      title: "Math Notes",
+      kicker: "Omphalos",
+      title: "Mathematics",
       intro: `
-        This section is for topology, graph theory, differential forms, proofs,
-        and mathematical ways of describing structure.
+        Math is one of my greatest passions. Other than English, it is the only language I know. It is an artform. Outside of formal studies, I've dedicated countless hours to learning it, honing it, and creating with it. 
       `,
       sections: [
         {
           title: "Purpose",
-          text: "These notes are for serious learning, but also for developing new conceptual connections between math, physics, and emergence."
+          text: "This section compiles my independent research, notes, and ideas within the field of math."
         }
       ],
       cards: [
         {
-          title: "Topology",
-          description: "Spaces, continuity, bases, quotients, and fundamental groups.",
-          target: "topology",
-          position: "top-left",
-          depth: 14
-        },
-        {
-          title: "Graph Theory",
-          description: "Tournaments, matchings, orientations, Eulerian structure, and Hamiltonian paths.",
-          target: "graph-theory",
+          title: "Research",
+          description: "My work of the past and present.",
+          target: "research",
           position: "top-right",
           depth: 14
         },
         {
-          title: "Emergence",
-          description: "When a collection of parts behaves approximately as one object.",
-          target: "emergence",
+          title: "Coursework",
+          description: "Notes from formal coursework at Northwestern University.",
+          target: "courses",
           position: "bottom-right",
           depth: 14
+        }
+      ],
+      media: [
+        {
+          src: "media/nts_mathaward_1.jpeg",
+          alt: "Northwestern University 2026 Award for Excellence in Mathematics: Nova Travis",
+          caption: "2026 Award for Excellence in Mathematics by a First-Year Student",
+          position: "left-middle"
         }
       ]
     },
 
-    topology: {
-      kicker: "Math Region",
-      title: "Topology",
+    research: {
+      kicker: "Voyages",
+      title: "Research, Exploration, and Application",
       intro: `
         Topology studies the structure of spaces through continuity, openness,
         connectedness, compactness, and deformation.
@@ -937,39 +949,385 @@ window.siteData = {
           text: "Bases, product topologies, quotient spaces, fundamental groups, and the beginnings of knot theory."
         }
       ],
-      cards: []
+      cards: [
+        {
+          title: "3x+1",
+          description: "My attempt at the infamous Collatz Conjecture",
+          target: "collatz",
+          position: "top-left",
+          depth: 14
+        },
+        {
+          title: "Hyper-Operations",
+          description: "Studies on tetration, and solving a related problem.",
+          target: "tetration",
+          position: "top-right",
+          depth: 14
+        },
+        {
+          title: "Machine Learning",
+          description: "My work for KEP during my Summer2025 internship.",
+          target: "mml",
+          position: "bottom-right",
+          depth: 14
+        },
+        {
+          title: "Designing Spectrum",
+          description: "My work for KEP during my Summer2025 internship.",
+          target: "spectrum",
+          position: "bottom-left",
+          depth: 14
+        },
+      ]
     },
 
-    "graph-theory": {
-      kicker: "Math Region",
-      title: "Graph Theory",
+    collatz: {
+      kicker: "Independent Research",
+      title: "3x+1",
       intro: `
-        Graph theory studies relationships through vertices, edges, directions,
-        paths, cycles, and structural constraints.
+        The Collatz Conjecture asks whether every positive integer eventually
+        reaches the loop 4, 2, 1 under a rule that halves even values and sends
+        odd values to 3n + 1.
       `,
       sections: [
         {
-          title: "Current Focus",
-          text: "Tournaments, Hamiltonian paths, strong orientations, matchings, closures, and Eulerian structure."
+          title: "The Question",
+          text: "The rule is simple, but no proof yet explains why every positive starting value should reach 4, 2, 1. Every tested value does, yet the general conjecture remains unresolved."
+        },
+        {
+          title: "My Exploration",
+          text: "I have been approaching the problem through parity patterns, prime-divisor chains, inverse transformations, generating functions, and the geometry induced by iteration. I am interested in finding structure stable enough to become a rigorous argument."
+        },
+        {
+          title: "Research Notebook",
+          text: "This page will grow into a record of definitions, lemmas, computational observations, proof attempts, and the dead ends that still revealed something useful."
+        }
+      ],
+      cards: [
+      ]
+    },
+
+    tetration: {
+      kicker: "Independent Research",
+      title: "Hyper-Operations",
+      intro: `
+        Hyper-operations extend the familiar ladder of arithmetic: addition,
+        multiplication, exponentiation, tetration, and beyond. My focus has been
+        tetration, or repeated exponentiation.
+      `,
+      sections: [
+        {
+          title: "Why Tetration",
+          text: "Exponentiation already grows quickly; tetration creates a new kind of recursive object. It raises questions about inverse problems, congruences, iteration, and how enormous numbers can still have describable structure."
+        },
+        {
+          title: "Current Work",
+          text: "I have been studying tetration and working through a related problem of my own. This page will eventually contain the formal statement, notation, examples, and the mathematics behind my approach."
+        },
+        {
+          title: "Coming Soon",
+          text: "I will add proof attempts, computational experiments, useful identities, and a clearer account of what I discovered as the project develops."
+        }
+      ],
+      cards: [
+      ]
+    },
+
+    courses: {
+      kicker: "Navigation Training",
+      title: "Formal Coursework",
+      intro: `
+        Section compiling all of my formal coursework in mathematics at Northwestern University (Current: Sept2025-June2026)
+      `,
+      sections: [
+        {
+          title: "MENU",
+          text: "Stands for Mathematical Experience for Northwestern Undergraduates, and all courses with MENU are a more mathematically advanced extension of their non-MENU counterparts.",
+          link: "https://www.math.northwestern.edu/undergraduate/mathematical-experience-for-northwestern-undergraduates-menu/"
+        },
+        {
+          title: "Fall Classes",
+          text: "Some classes listed are ones that I am enrolled to take in Fall2026, but have not yet taken. Clicking on them links to more course info instead, so that you may join in my excitement to take them.",
+        }
+      ],
+      cards: [],
+      stack: {
+        label: "Courses",
+        depth: 11,
+        items: [
+          {
+            title: "Math105-7",
+            description: "Tools of the Trade",
+            target: "m105"
+          },
+          {
+            title: "Math291-(1,2,3)",
+            description: "MENU Intensive Lin Alg/MV Calc",
+            target: "m291"
+          },
+          {
+            title: "Math306",
+            description: "Combinatorics & Discrete Math",
+            target: "m306"
+          },
+          {
+            title: "Math308",
+            description: "Graph Theory",
+            target: "m308"
+          },
+          {
+            title: "Math366",
+            description: "Mathematical Models in Finance",
+            target: "m366"
+          },
+          {
+            title: "Math368",
+            description: "Introduction to Optimization",
+            target: "m368"
+          },
+          {
+            title: "Math321-(1,2,3)",
+            description: "(Fall2026) MENU Real Analysis",
+            link: "https://class-descriptions.northwestern.edu/5010/WCAS/MATH/20783"
+          },
+          {
+            title: "Math310-(1,2,3)",
+            description: "(Fall2026) Probability and Stochastic Processes",
+            link: "https://class-descriptions.northwestern.edu/5000/WCAS/MATH/10944"
+          },
+          {
+            title: "NeuroSci366",
+            description: "(Fall2026) Brain Function Through the Lens of Computation",
+            link: "https://catalogs.northwestern.edu/undergraduate/courses-az/neurosci/#:~:text=NEUROSCI%C2%A0366%2D0%20Brain%20Function%20Through%20the%20Lens%20of%20Computation%20(1%20Unit)%C2%A0%C2%A0"
+          },          
+        ]
+      }
+    },
+
+    m105: {
+      kicker: "Northwestern Coursework",
+      title: "MATH 105-7",
+      intro: `
+        Tools of the Trade was an early bridge into communicating and thinking
+        mathematically with greater precision.
+      `,
+      sections: [
+        {
+          title: "What I Built",
+          text: "The course strengthened the habits behind serious mathematical work: reading definitions carefully, testing examples, writing arguments clearly, and treating notation as part of the reasoning."
+        },
+        {
+          title: "Notes",
+          text: "I will add selected notes, problems, and early proof-writing takeaways here."
         }
       ],
       cards: []
     },
 
-    emergence: {
-      kicker: "Research Thread",
-      title: "Emergence",
+    m291: {
+      kicker: "Northwestern Coursework",
+      title: "MATH 291 (1, 2, 3)",
       intro: `
-        Emergence asks when many interacting parts can be treated as one
-        persistent effective object.
+        MENU's intensive linear algebra and multivariable calculus sequence made
+        familiar computational ideas feel structural, geometric, and proof-based.
       `,
       sections: [
         {
-          title: "Working Definition",
-          text: "A collection of parts exhibits emergence when it behaves approximately as one object through persistence over time, internal coupling, and a reduced effective description."
+          title: "Core Themes",
+          text: "Linear transformations, vector spaces, eigenvalues, multivariable differentiation and integration, and the geometric meaning behind the tools."
+        },
+        {
+          title: "What Stayed With Me",
+          text: "The sequence helped make linear algebra feel like a language for structure, while multivariable calculus became a way of describing change across higher-dimensional spaces."
+        }
+      ],
+      cards: [
+
+      ],
+      media: [
+        {
+          src: "media/nts_291_1.jpeg",
+          alt: "Math 291 Notes Page 1",
+          caption: "Some notes on vector projections and a boredom sketch"
+        },
+        {
+          src: "media/nts_291_2.jpeg",
+          alt: "Math 291 Notes Page 2",
+          caption: "Homework problem showing eigenvectors as a basis"
+        },
+        {
+          src: "media/nts_291_3.jpeg",
+          alt: "Math 291 Notes Page 3",
+          caption: "Homework problem proving a matrix is non-diagonalizable"
+        },
+        {
+          src: "media/nts_291_4.jpeg",
+          alt: "Math 291 Notes Page 4",
+          caption: "Limit proof "
+        },
+        {
+          src: "media/nts_291_5.jpeg",
+          alt: "Math 291 Notes Page 5",
+          caption: "Proof using differential forms"
+        },
+        {
+          src: "media/nts_291_6.jpeg",
+          alt: "Math 291 Notes Page 6",
+          caption: "Last minute notes given to a friend before our final"
+        }
+      ]
+    },
+
+    m306: {
+      kicker: "Northwestern Coursework",
+      title: "MATH 306",
+      intro: `
+        Combinatorics and Discrete Mathematics introduced the art of extracting
+        rigid structure from finite systems.
+      `,
+      sections: [
+        {
+          title: "Core Themes",
+          text: "Counting, recurrence relations, generating functions, inclusion-exclusion, discrete structures, and proof techniques tailored to mathematics with hidden counting principles."
+        },
+        {
+          title: "Why I Loved It",
+          text: "Combinatorics rewards invention. A small change in viewpoint can turn a difficult problem into counting, which births something inevitable. Before I knew much about it, I didn't like combinatorics, and thought of it only as memorizing tons of formulas for specific circumstances. Oh, how glad I am that I took this course!"
+        }
+      ],
+      cards: [
+        {
+          title: "3x+1",
+          description: "My attempt at the infamous Collatz Conjecture",
+          target: "collatz",
+          position: "bottom-left",
+          depth: 14
+        }
+      ],
+      media: [
+        {
+          src: "media/nts_306_1.jpeg",
+          alt: "Math 306 Notes Page 1",
+          caption: "A shot of the board during a lecture proof which almost literally had my jaw on the floor, and gave my professor quite a laugh."
+        },
+        {
+          src: "media/nts_291_2.jpeg",
+          alt: "Math 306 Notes Page 2",
+          caption: "Utilization of generating functions learned in class to approach the Collatz Conjecture!"
+        }
+      ]
+    },
+
+    m308: {
+      kicker: "Northwestern Coursework",
+      title: "MATH 308",
+      intro: `
+        Graph Theory studies networks through vertices and edges, but its real
+        strength is how naturally it turns relationships into mathematics.
+      `,
+      sections: [
+        {
+          title: "Core Themes",
+          text: "Connectivity, trees, matchings, planarity, tournaments, colorings, cycles, and the balance between local constraints and global behavior."
+        },
+        {
+          title: "Favorite Idea",
+          text: "A graph can look simple while hiding an enormous amount of structure. This course sharpened my instinct for asking what a condition forces everywhere else in the system. This is a good takeaway for everything elsewhere in mathematics, not just for vertices and edges."
         }
       ],
       cards: []
-    }
+    },
+
+    m366: {
+      kicker: "Northwestern Coursework",
+      title: "MATH 366",
+      intro: `
+        Mathematical Models in Finance examined how probability, stochastic
+        processes, and optimization can model uncertainty in financial systems.
+      `,
+      sections: [
+        {
+          title: "Core Themes",
+          text: "Random walks, arbitrage, pricing, risk, discrete-time models, and the mathematical assumptions that make a financial model meaningful."
+        },
+        {
+          title: "What Interested Me",
+          text: "The course made applied probability feel alive: an abstract model can become a decision tool, provided its assumptions are understood well enough to know where it breaks."
+        },
+        {
+          title: "Notes",
+          text: "I will add notes and selected model explorations here."
+        }
+      ],
+      cards: [],
+      media: [
+        {
+          src: "media/nts_366_1.jpeg",
+          alt: "Math 366 Notes Page 1",
+          caption: "Week 2 Notes, efficient frontier",
+          position: "top-left"
+        },
+        {
+          src: "media/nts_366_2.jpeg",
+          alt: "Math 366 Notes Page 2",
+          caption: "Midterm prep, lots of notes",
+          position: "top-right"
+        },
+        {
+          src: "media/nts_366_3.jpeg",
+          alt: "Math 366 Notes Page 3",
+          caption: "Brownian motion intuition and formulas",
+          position: "bottom-left"
+        },
+        {
+          src: "media/nts_366_4.jpeg",
+          alt: "Math 366 Notes Page 4",
+          caption: "Formulas for the final",
+          position: "bottom-right"
+        }
+      ]
+    },
+
+    m368: {
+      kicker: "Northwestern Coursework",
+      title: "MATH 368",
+      intro: `
+        Introduction to Optimization studies how to make the best possible choice
+        under constraints, from linear programs to smooth nonlinear systems.
+      `,
+      sections: [
+        {
+          title: "Core Themes",
+          text: "Linear programming, simplex, duality, convexity, complementary slackness, Lagrange multipliers, and the KKT conditions."
+        },
+        {
+          title: "The Central Idea",
+          text: "Optimization turns a question of preference into a question of structure: which constraints are active, which directions improve the objective, and when can we prove that no better solution exists?"
+        }
+      ],
+      cards: [],
+      media: [
+        {
+          src: "media/nts_368_1.jpeg",
+          alt: "Math 368 Notes Page 1",
+          caption: "Gaining intuition on LP problems which are unbounded or have multiple optimal solutions"
+        },
+        {
+          src: "media/nts_368_2.jpeg",
+          alt: "Math 368 Notes Page 2",
+          caption: "KKT Optimization conditions plus intuition sketch"
+        },
+        {
+          src: "media/nts_368_3.jpeg",
+          alt: "Math 368 Notes Page 3",
+          caption: "Linear programming introduction"
+        },
+        {
+          src: "media/nts_368_4.jpeg",
+          alt: "Math 368 Notes Page 4",
+          caption: "Duality and it's linear algebra connections"
+        }
+      ]
+    },
   }
 };

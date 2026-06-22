@@ -491,6 +491,39 @@ function renderHome() {
     .join("");
 }
 
+function configureMedia(scope = document) {
+  const images = scope.querySelectorAll(".media-image");
+
+  for (const image of images) {
+    const setDimensions = () => {
+      const media = image.closest(".space-media");
+
+      if (!media || !image.naturalWidth || !image.naturalHeight) return;
+
+      const maxWidth = Math.min(360, window.innerWidth * 0.3);
+      const maxHeight = Math.min(280, window.innerHeight * 0.36);
+
+      const scale = Math.min(
+        maxWidth / image.naturalWidth,
+        maxHeight / image.naturalHeight
+      );
+
+      const width = Math.round(image.naturalWidth * scale);
+      const height = Math.round(image.naturalHeight * scale);
+
+      media.style.setProperty("--media-visible-width", `${width}px`);
+      media.style.setProperty("--media-visible-height", `${height}px`);
+      media.style.setProperty("--media-caption-offset", `${height / 2 + 16}px`);
+    };
+
+    if (image.complete) {
+      setDimensions();
+    } else {
+      image.addEventListener("load", setDimensions, { once: true });
+    }
+  }
+}
+
 function renderContentScene(scene, pageId) {
   const page = siteData.pages[pageId];
 
@@ -547,6 +580,61 @@ function renderContentScene(scene, pageId) {
   })
   .join("");
 
+    const cardToMediaSlot = {
+      "top-left": "left-top",
+      "bottom-left": "left-bottom",
+      "top-right": "right-top",
+      "bottom-right": "right-bottom"
+    };
+
+    const occupiedMediaSlots = new Set(
+      (page.cards ?? [])
+        .map((card) => cardToMediaSlot[card.position])
+        .filter(Boolean)
+    );
+
+    const availableMediaSlots = [
+      "left-top",
+      "left-middle",
+      "left-bottom",
+      "right-top",
+      "right-middle",
+      "right-bottom"
+    ].filter((slot) => !occupiedMediaSlots.has(slot));
+
+    const mediaHTML = (page.media ?? [])
+      .map((item, index) => {
+        const position =
+          item.position ??
+          availableMediaSlots[index] ??
+          availableMediaSlots[index % availableMediaSlots.length] ??
+          "right-middle";
+
+        return `
+          <figure
+            class="space-media media-${escapeHTML(position)} space-object"
+            data-depth="${item.depth ?? 10}"
+            tabindex="0"
+          >
+            <div class="media-frame">
+              <img
+                class="media-image"
+                src="${escapeHTML(item.src)}"
+                alt="${escapeHTML(item.alt ?? "")}"
+                loading="lazy"
+              />
+            </div>
+
+            ${
+              item.caption
+                ? `<figcaption>${escapeHTML(item.caption)}</figcaption>`
+                : ""
+            }
+          </figure>
+        `;
+      })
+      .join("");
+
   const stackItems = page.stack?.items ?? [];
 
   const stackHTML = stackItems.length
@@ -563,18 +651,36 @@ function renderContentScene(scene, pageId) {
         }
 
         ${stackItems
-          .map((item, index) => {
+          .map((item) => {
+            const itemInner = `
+              <h3>${escapeHTML(item.title)}</h3>
+              ${
+                item.description
+                  ? `<p>${escapeHTML(item.description)}</p>`
+                  : ""
+              }
+            `;
+
+            if (item.link) {
+              const opensNewTab = item.link.startsWith("http");
+
+              return `
+                <a
+                  class="stack-item"
+                  href="${escapeHTML(item.link)}"
+                  ${opensNewTab ? `target="_blank" rel="noopener noreferrer"` : ""}
+                >
+                  ${itemInner}
+                </a>
+              `;
+            }
+
             return `
               <button
                 class="stack-item"
                 ${item.target ? `data-link="${escapeHTML(item.target)}"` : "disabled"}
               >
-                <h3>${escapeHTML(item.title)}</h3>
-                ${
-                  item.description
-                    ? `<p>${escapeHTML(item.description)}</p>`
-                    : ""
-                }
+                ${itemInner}
               </button>
             `;
           })
@@ -625,11 +731,14 @@ function renderContentScene(scene, pageId) {
 
       <div class="node-cloud">
         ${cardsHTML}
+        ${mediaHTML}
       </div>
 
       ${stackHTML}
     </div>
   `;
+
+  configureMedia(scene);
 }
 
 function getSpareScene() {
@@ -807,7 +916,10 @@ window.addEventListener("mouseleave", () => {
   mouse.targetY = 0;
 });
 
-window.addEventListener("resize", resizeCanvas);
+window.addEventListener("resize", () => {
+  resizeCanvas();
+  configureMedia(document);
+});
 
 renderHome();
 
