@@ -97,27 +97,43 @@ window.siteData = {
           title: "Website",
           description: "Visit the 2Techi website to learn more.",
           link: "https://www.2techi.com/",
-          position: "top-left",
+          position: "bottom-right",
           depth: 14
         },
         {
-          title: "Encrypted Exchange",
-          description: "Safer ways for drivers to exchange identity and insurance information.",
+          title: "Features",
+          description: "More info on app features and functionality.",
           target: "iar-exchange",
-          position: "bottom-right",
+          position: "bottom-left",
           depth: 14
+        }
+      ],
+      media: [
+        {
+          src: "media/nts_iar_1.png",
+          alt: "IAR Image 1",
+          caption: ""
+        },
+        {
+          src: "media/nts_iar_2.png",
+          alt: "IAR Image 2",
+          caption: "",
         }
       ]
     },
 
-    "iar-evidence": {
-      kicker: "I.A.R. Subsystem",
-      title: "Evidence Capture",
+    "iar-exchange": {
+      kicker: "I.A.R.",
+      title: "Features",
       intro: `
-        This subsystem focuses on preserving accident evidence before it gets
-        lost, forgotten, or disputed.
+        This focuses on information exchange without making users
+        expose more personal information than necessary.
       `,
       sections: [
+        {
+          title: "Concept",
+          text: "Drivers could verify and exchange required accident information through a controlled encrypted flow instead of manually copying sensitive documents."
+        },
         {
           title: "What It Records",
           text: "Evidence could include images, video, timestamps, location, vehicle positions, road conditions, visible damage, and witness notes."
@@ -125,22 +141,6 @@ window.siteData = {
         {
           title: "Design Goal",
           text: "The goal is not just to collect data, but to collect it in a structured way that later becomes useful for reports, claims, and legal clarity."
-        }
-      ],
-      cards: []
-    },
-
-    "iar-exchange": {
-      kicker: "I.A.R. Subsystem",
-      title: "Encrypted Exchange",
-      intro: `
-        This subsystem focuses on information exchange without making users
-        expose more personal information than necessary.
-      `,
-      sections: [
-        {
-          title: "Concept",
-          text: "Drivers could verify and exchange required accident information through a controlled encrypted flow instead of manually copying sensitive documents."
         }
       ],
       cards: []
@@ -289,6 +289,23 @@ window.siteData = {
           position: "bottom-right",
           depth: 14
         },
+      ],
+      media: [
+        {
+          src: "media/nts_kepSens1.png",
+          alt: "Time difference histogram",
+          caption: "A histogram I made with Python to learn about the data I was working with."
+        },
+        {
+          src: "media/nts_kepBee.png",
+          alt: "Beeswarm Plot",
+          caption: "Beeswarm plot used to analyze feature usefulness including raw and engineered features."
+        },
+        {
+          src: "media/nts_kepSens2.png",
+          alt: "DPC Tables",
+          caption: "A scatter plot used to determine how I should filter the dataset."
+        }
       ]
     },
 
@@ -402,6 +419,11 @@ window.siteData = {
           src: "media/nts_DPC.png",
           alt: "DPC calculations",
           caption: "Daily Percentage Change (DPC) computations used to evaluate saved energy."
+        },
+        {
+          src: "media/nts_emaTable.png",
+          alt: "DPC Tables",
+          caption: "Table used to compare graphs with different alpha and r values."
         }
       ]
     },
