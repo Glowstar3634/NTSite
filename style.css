@@ -235,7 +235,7 @@ body.loading .space-object {
 
 .home-motto {
   position: absolute;
-  bottom: calc(100% + 100px);
+  bottom: calc(100% + 200px);
   left: 50%;
   width: max-content;
   margin: 0;
