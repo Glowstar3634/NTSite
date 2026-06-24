@@ -34,10 +34,40 @@ window.siteData = {
       cards: [],
       media: [
         {
-          src: "media/nts_me.jpg",
+          src: "media/nts_me1.jpg",
+          alt: "Nova Travis",
+          caption: "",
+          position: "left-top"
+        },
+        {
+          src: "media/nts_me2.PNG",
+          alt: "Nova Travis",
+          caption: "",
+          position: "left-bottom"
+        },
+        {
+          src: "media/nts_me3.PNG",
           alt: "Nova Travis",
           caption: "",
           position: "left-middle"
+        },
+        {
+          src: "media/nts_me4.jpg",
+          alt: "Nova Travis",
+          caption: "",
+          position: "right-top"
+        },
+        {
+          src: "media/nts_me5.PNG",
+          alt: "Nova Travis",
+          caption: "",
+          position: "right-middle"
+        },
+        {
+          src: "media/nts_me6.jpg",
+          alt: "Nova Travis",
+          caption: "",
+          position: "right-bottom"
         }
       ]
     },
