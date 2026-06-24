@@ -15,7 +15,7 @@ window.siteData = {
       kicker: "Origin Point",
       title: "About",
       intro: `
-        I’m Nova Travis an innovator within mathematics, technology, and creativity. I study pure mathematics and computer science at Northwestern University
+        I’m Nova Travis, an innovator within mathematics, technology, and creativity. I study pure mathematics and computer science at Northwestern University.
       `,
       sections: [
         {
@@ -1401,25 +1401,25 @@ window.siteData = {
           src: "media/nts_366_1.jpeg",
           alt: "Math 366 Notes Page 1",
           caption: "Week 2 Notes, efficient frontier",
-          position: "top-left"
+          position: "left-top"
         },
         {
           src: "media/nts_366_2.jpeg",
           alt: "Math 366 Notes Page 2",
           caption: "Midterm prep, lots of notes",
-          position: "top-right"
+          position: "right-top"
         },
         {
           src: "media/nts_366_3.jpeg",
           alt: "Math 366 Notes Page 3",
           caption: "Brownian motion intuition and formulas",
-          position: "bottom-left"
+          position: "left-bottom"
         },
         {
           src: "media/nts_366_4.jpeg",
           alt: "Math 366 Notes Page 4",
           caption: "Formulas for the final",
-          position: "bottom-right"
+          position: "right-bottom"
         }
       ]
     },

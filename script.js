@@ -32,6 +32,20 @@ const homeIdentity = document.getElementById("homeIdentity");
 const sceneA = document.getElementById("sceneA");
 const sceneB = document.getElementById("sceneB");
 
+
+const sound = {
+  context: null,
+  master: null,
+  bassGain: null,
+  bassOscillator: null,
+  noiseBuffer: null,
+  enabled: true,
+  pointerSpeed: 0,
+  lastPointerX: 0,
+  lastPointerY: 0,
+  lastPointerTime: 0
+};
+
 const siteData = window.siteData;
 
 if (!siteData) {
@@ -44,6 +58,207 @@ function random(min, max) {
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
+}
+
+function createNoiseBuffer(context) {
+  const buffer = context.createBuffer(1, context.sampleRate * 2, context.sampleRate);
+  const samples = buffer.getChannelData(0);
+
+  for (let index = 0; index < samples.length; index += 1) {
+    samples[index] = Math.random() * 2 - 1;
+  }
+
+  return buffer;
+}
+
+function initializeSound() {
+  if (sound.context) return true;
+
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+
+  if (!AudioContextClass) return false;
+
+  const context = new AudioContextClass();
+  const master = context.createGain();
+
+  const limiter = context.createDynamicsCompressor();
+
+  limiter.threshold.value = -4;
+  limiter.knee.value = 12;
+  limiter.ratio.value = 4;
+  limiter.attack.value = 0.008;
+  limiter.release.value = 0.18;
+
+  master.gain.value = 0;
+  master.connect(limiter);
+  limiter.connect(context.destination);
+
+  const ambienceGain = context.createGain();
+  ambienceGain.gain.value = 0.22;
+  ambienceGain.connect(master);
+
+  const lowOscillator = context.createOscillator();
+  const lowGain = context.createGain();
+
+  lowOscillator.type = "triangle";
+  lowOscillator.frequency.value = 25;
+  lowGain.gain.value = 0.72;
+
+  lowOscillator.connect(lowGain);
+  lowGain.connect(ambienceGain);
+  lowOscillator.start();
+
+  const highOscillator = context.createOscillator();
+  const highGain = context.createGain();
+
+  highOscillator.type = "sine";
+  highOscillator.frequency.value = 128;
+  highGain.gain.value = 0.28;
+
+  highOscillator.connect(highGain);
+  highGain.connect(ambienceGain);
+  highOscillator.start();
+
+  const noiseSource = context.createBufferSource();
+  const noiseFilter = context.createBiquadFilter();
+  const noiseGain = context.createGain();
+
+  sound.noiseBuffer = createNoiseBuffer(context);
+
+  noiseSource.buffer = sound.noiseBuffer;
+  noiseSource.loop = true;
+
+  noiseFilter.type = "lowpass";
+  noiseFilter.frequency.value = 550;
+  noiseFilter.Q.value = 0.4;
+
+  noiseGain.gain.value = 0.028;
+
+  noiseSource.connect(noiseFilter);
+  noiseFilter.connect(noiseGain);
+  noiseGain.connect(ambienceGain);
+  noiseSource.start();
+
+  const bassOscillator = context.createOscillator();
+  const bassGain = context.createGain();
+
+  bassOscillator.type = "sine";
+  bassOscillator.frequency.value = 38;
+  bassGain.gain.value = 0.22;
+
+  bassOscillator.connect(bassGain);
+  bassGain.connect(master);
+  bassOscillator.start();
+
+  sound.context = context;
+  sound.master = master;
+  sound.bassGain = bassGain;
+  sound.bassOscillator = bassOscillator;
+
+  return true;
+}
+
+async function setSoundEnabled(enabled) {
+  if (enabled && !initializeSound()) return;
+
+  sound.enabled = enabled;
+
+  if (sound.context?.state === "suspended") {
+    await sound.context.resume();
+  }
+
+  const now = sound.context?.currentTime ?? 0;
+
+  sound.master?.gain.setTargetAtTime(
+    enabled ? 0.9 : 0.001,
+    now,
+    0.12
+  );
+}
+
+function updateSoundFromPointer() {
+  if (!sound.enabled || !sound.context) return;
+
+  sound.pointerSpeed *= 0.75;
+
+  const motion = clamp(sound.pointerSpeed, 0, 1);
+  const now = sound.context.currentTime;
+  const bassFrequency = 50 + motion * 55;
+
+  sound.bassGain.gain.setTargetAtTime(
+    0.22 + motion * 0.7,
+    now,
+    0.09
+  );
+
+  sound.bassOscillator.frequency.setTargetAtTime(
+    bassFrequency,
+    now,
+    0.12
+  );
+}
+
+function playTravelSound(direction) {
+  if (!sound.enabled || !sound.context || !sound.noiseBuffer) return;
+
+  const context = sound.context;
+  const now = context.currentTime;
+  const duration = 1.08;
+  const zoomingIn = direction === 1;
+
+  const noise = context.createBufferSource();
+  const filter = context.createBiquadFilter();
+  const gain = context.createGain();
+
+  const subOscillator = context.createOscillator();
+  const subGain = context.createGain();
+
+  noise.buffer = sound.noiseBuffer;
+
+  filter.type = "lowpass";
+  filter.Q.value = 0.7;
+
+  filter.frequency.setValueAtTime(
+    zoomingIn ? 180 : 760,
+    now
+  );
+
+  filter.frequency.exponentialRampToValueAtTime(
+    zoomingIn ? 920 : 150,
+    now + duration
+  );
+
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.4, now + 0.15);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+  subOscillator.type = "sine";
+  subOscillator.frequency.setValueAtTime(
+    zoomingIn ? 44 : 76,
+    now
+  );
+
+  subOscillator.frequency.exponentialRampToValueAtTime(
+    zoomingIn ? 68 : 40,
+    now + duration
+  );
+
+  subGain.gain.setValueAtTime(0.0001, now);
+  subGain.gain.exponentialRampToValueAtTime(0.13, now + 0.12);
+  subGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+  noise.connect(filter);
+  filter.connect(gain);
+  gain.connect(sound.master);
+
+  subOscillator.connect(subGain);
+  subGain.connect(sound.master);
+
+  noise.start(now);
+  noise.stop(now + duration);
+
+  subOscillator.start(now);
+  subOscillator.stop(now + duration);
 }
 
 function easeOutCubic(t) {
@@ -100,6 +315,7 @@ function startTravel(focusX, focusY, duration = 1250, direction = 1) {
   travelDirection = direction;
   travelDuration = duration;
   travelStart = performance.now();
+  playTravelSound(direction);
 
   document.body.classList.add("traveling");
 }
@@ -407,6 +623,8 @@ function draw(time) {
 
   mouse.x += (mouse.targetX - mouse.x) * 0.035;
   mouse.y += (mouse.targetY - mouse.y) * 0.035;
+
+  updateSoundFromPointer();
 
   const warpAmount = getWarpAmount(time);
   const travelAmount = getTravelAmount(time);
@@ -908,6 +1126,27 @@ window.addEventListener("keydown", (event) => {
 });
 
 window.addEventListener("mousemove", (event) => {
+  const now = performance.now();
+
+  if (sound.lastPointerTime) {
+    const distance = Math.hypot(
+      event.clientX - sound.lastPointerX,
+      event.clientY - sound.lastPointerY
+    );
+
+    const elapsed = Math.max(now - sound.lastPointerTime, 16);
+
+    sound.pointerSpeed = clamp(
+      distance / elapsed / 1.2,
+      0,
+      1
+    );
+  }
+
+  sound.lastPointerX = event.clientX;
+  sound.lastPointerY = event.clientY;
+  sound.lastPointerTime = now;
+
   mouse.targetX = (event.clientX / window.innerWidth - 0.5) * -10;
   mouse.targetY = (event.clientY / window.innerHeight - 0.5) * -10;
 });
@@ -921,6 +1160,16 @@ window.addEventListener("resize", () => {
   resizeCanvas();
   configureMedia(document);
 });
+
+function enableSoundOnFirstInteraction() {
+  setSoundEnabled(true);
+
+  document.removeEventListener("pointerdown", enableSoundOnFirstInteraction);
+  document.removeEventListener("keydown", enableSoundOnFirstInteraction);
+}
+
+document.addEventListener("pointerdown", enableSoundOnFirstInteraction);
+document.addEventListener("keydown", enableSoundOnFirstInteraction);
 
 renderHome();
 
