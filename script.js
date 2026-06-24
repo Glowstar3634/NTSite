@@ -474,7 +474,8 @@ function escapeHTML(value) {
 
 function renderHome() {
   homeIdentity.querySelector("h1").textContent = siteData.home.title;
-  homeIdentity.querySelector("p").textContent = siteData.home.subtitle;
+  homeIdentity.querySelector(".identity-subtitle").textContent =
+  siteData.home.subtitle;
 
   homeLinks.innerHTML = siteData.home.links
     .map((link) => {

@@ -31,7 +31,15 @@ window.siteData = {
           text: "I’m always open to connecting with fellow thinkers, collaborators, and anyone interested in my work. Feel free to reach out through email: spr.novatravis29@gmail.com"
         }
       ],
-      cards: []
+      cards: [],
+      media: [
+        {
+          src: "media/nts_me.jpg",
+          alt: "Nova Travis",
+          caption: "",
+          position: "left-middle"
+        }
+      ]
     },
 
     projects: {
@@ -937,14 +945,14 @@ window.siteData = {
           title: "Research",
           description: "My work of the past and present.",
           target: "research",
-          position: "top-right",
+          position: "bottom-right",
           depth: 14
         },
         {
           title: "Coursework",
           description: "Notes from formal coursework at Northwestern University.",
           target: "courses",
-          position: "bottom-right",
+          position: "bottom-left",
           depth: 14
         }
       ],
@@ -953,7 +961,13 @@ window.siteData = {
           src: "media/nts_mathaward_1.jpeg",
           alt: "Northwestern University 2026 Award for Excellence in Mathematics: Nova Travis",
           caption: "2026 Award for Excellence in Mathematics by a First-Year Student",
-          position: "left-middle"
+          position: "left-top"
+        },
+        {
+          src: "media/nts_collatz_7.jpeg",
+          alt: "NUMS Talk Research Presentation",
+          caption: "(January 28th, 2026) - Me presenting my research on the Collatz Conjecture for the Northwestern Undergraduate Math Society (NUMS)",
+          position: "right-top"
         }
       ]
     },
@@ -962,14 +976,21 @@ window.siteData = {
       kicker: "Voyages",
       title: "Research, Exploration, and Application",
       intro: `
-        Topology studies the structure of spaces through continuity, openness,
-        connectedness, compactness, and deformation.
+        Math research, whether it be through formal collaboration or independent rabbit holes, is the gateway to our understanding of the universe.
       `,
       sections: [
         {
-          title: "Current Focus",
-          text: "Bases, product topologies, quotient spaces, fundamental groups, and the beginnings of knot theory."
-        }
+          title: "My Focus",
+          text: "Anything, really. On this page I've documented some of my math research endeavors over the past 18 months, ranging from machine learning to unsolved problems."
+        },
+        {
+          title: "Current Work",
+          text: "I am building Spectrum with my team on SPRNOVA, as well as pursuing an idea born from chaos theory and topology, more on that coming soon!"
+        },
+        {
+          title: "The Future",
+          text: "I intend as a mathematician to find math's trails across anything I can in the world. We may never get the full story of our universe, but like we are forensic scientists with mathematical magnifying glasses, we can get a pretty good idea."
+        },
       ],
       cards: [
         {
@@ -1004,25 +1025,25 @@ window.siteData = {
     },
 
     collatz: {
-      kicker: "Independent Research",
-      title: "3x+1",
+      kicker: "Unsolved problem",
+      title: "Collatz Conjecture",
       intro: `
-        The Collatz Conjecture asks whether every positive integer eventually
+        The Collatz (3x+1) Conjecture asks whether every positive integer eventually
         reaches the loop 4, 2, 1 under a rule that halves even values and sends
         odd values to 3n + 1.
       `,
       sections: [
         {
-          title: "The Question",
-          text: "The rule is simple, but no proof yet explains why every positive starting value should reach 4, 2, 1. Every tested value does, yet the general conjecture remains unresolved."
+          title: "\"Mind Virus\"",
+          text: "The rule is so simple, the problem is said to be a trap for young mathematicians. I heard this and fell right in, not out of naivety, but out of curiousity. It was my first solo introduction to conducting rigorous proofs."
         },
         {
           title: "My Exploration",
-          text: "I have been approaching the problem through parity patterns, prime-divisor chains, inverse transformations, generating functions, and the geometry induced by iteration. I am interested in finding structure stable enough to become a rigorous argument."
+          text: "Parity patterns, prime-divisor chains, inverse transformations, generating functions... I am interested in finding structure stable enough to become a rigorous argument, and have come across several promising approaches that I've verified with Northwestern professors."
         },
         {
           title: "Research Notebook",
-          text: "This page will grow into a record of definitions, lemmas, computational observations, proof attempts, and the dead ends that still revealed something useful."
+          text: "This page contains some early highlights from a year of research. I presented some of my work at Northwestern as well (right). I have taken a break from Collatz, but I am certainly not finished with the problem."
         }
       ],
       cards: [
@@ -1049,9 +1070,9 @@ window.siteData = {
           caption: "For every point (x,y), if we have found no looping numbers greater than y, there are no loops with x odd numbers."
         },
         {
-          src: "media/nts_collatz_5.png",
+          src: "media/nts_collatz_5.jpeg",
           alt: "Collatz Conjecture Research Image 5",
-          caption: "Beautiful plot on the complex plane retrieved by turning F(N) into a complex function. A red line passing through a lattice point corresponds to a looping integer. Ex: (2,2) -> 1"
+          caption: "Beautiful plot obtained by turning F(N) into a complex function. A red line passing through a lattice point corresponds to a looping integer. Ex: (2,2) -> 1"
         },
         {
           src: "media/nts_306_coll.jpeg",
@@ -1063,27 +1084,58 @@ window.siteData = {
 
     tetration: {
       kicker: "Independent Research",
-      title: "Hyper-Operations",
+      title: "Tetration Investigation",
       intro: `
         Hyper-operations extend the familiar ladder of arithmetic: addition,
-        multiplication, exponentiation, tetration, and beyond. My focus has been
+        multiplication, exponentiation, tetration, pentation... My focus has been
         tetration, or repeated exponentiation.
       `,
       sections: [
         {
           title: "Why Tetration",
-          text: "Exponentiation already grows quickly; tetration creates a new kind of recursive object. It raises questions about inverse problems, congruences, iteration, and how enormous numbers can still have describable structure."
+          text: "Exponentiation already grows quickly; tetration creates a new kind of recursive object. It raises questions about inverse problems, derivatives, iteration, and how enormous numbers can still have describable structure."
         },
         {
           title: "Current Work",
-          text: "I have been studying tetration and working through a related problem of my own. This page will eventually contain the formal statement, notation, examples, and the mathematics behind my approach."
+          text: "In 2025, I studied tetration for a few months while working through a related problem of my own. This page includes some of the mathematics behind my approach to that problem statement."
         },
         {
-          title: "Coming Soon",
-          text: "I will add proof attempts, computational experiments, useful identities, and a clearer account of what I discovered as the project develops."
+          title: "Real-World Applications",
+          text: "Interestingly, tetration's real world applications are rare. In physics, you can derive units of physical quantities by combination of multiplication and exponentiation, but tetration has no place. There no unit m^m, or kg^kg^kg. But computationally, there do exist problems to which tetration offers solutions."
         }
       ],
       cards: [
+        {
+          title: "Graham's Number",
+          description: "Learn about this beast born from hyperoperations, used explicitly in mathematical proof.",
+          link: "https://en.wikipedia.org/wiki/Graham%27s_number",
+          position: "bottom-right",
+          depth: 14
+        },
+        {
+          title: "Real and Complex Tetration",
+          description: "View this arXiv paper on extention of tetration from N -> C",
+          link: "https://arxiv.org/abs/2105.00247",
+          position: "top-right",
+          depth: 14
+        }
+      ],
+      media: [
+        {
+          src: "media/nts_ti_3.png",
+          alt: "Tetration Research Image 1",
+          caption: "Defining some recursive notation and an earlier derived formula for the derivative of x^^n using chain rule."
+        },
+        {
+          src: "media/nts_ti_2.png",
+          alt: "Tetration Research Image 2",
+          caption: "Finding an expression that shows when the derivative of x^^n = 0."
+        },
+        {
+          src: "media/nts_ti_1.png",
+          alt: "Tetration Research Image 3",
+          caption: "Graphs which shows several even tetration functions, and how the derived expression finds the zeroes of their derivatives (vertical lines)."
+        }
       ]
     },
 
@@ -1265,7 +1317,7 @@ window.siteData = {
           caption: "A shot of the board during a lecture proof which almost literally had my jaw on the floor, and gave my professor quite a laugh."
         },
         {
-          src: "media/nts_291_2.jpeg",
+          src: "media/nts_306_coll.jpeg",
           alt: "Math 306 Notes Page 2",
           caption: "Utilization of generating functions learned in class to approach the Collatz Conjecture!"
         }

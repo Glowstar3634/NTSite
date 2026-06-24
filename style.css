@@ -233,6 +233,28 @@ body.loading .space-object {
   transform: translateY(-1vh);
 }
 
+.home-motto {
+  position: absolute;
+  bottom: calc(100% + 100px);
+  left: 50%;
+  width: max-content;
+  margin: 0;
+
+  color: rgba(220, 228, 255, 0.8);
+  font-family: "Italianno", cursive;
+  font-size: clamp(2.5rem, 4.3vw, 4.2rem);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 0.75;
+  text-shadow:
+    0 0 16px rgba(170, 190, 255, 0.38),
+    0 0 42px rgba(95, 120, 255, 0.18);
+
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
 .corner-link,
 .back-button {
   position: absolute;
