@@ -1070,7 +1070,7 @@ window.siteData = {
           caption: "For every point (x,y), if we have found no looping numbers greater than y, there are no loops with x odd numbers."
         },
         {
-          src: "media/nts_collatz_5.jpeg",
+          src: "media/nts_collatz_5.png",
           alt: "Collatz Conjecture Research Image 5",
           caption: "Beautiful plot obtained by turning F(N) into a complex function. A red line passing through a lattice point corresponds to a looping integer. Ex: (2,2) -> 1"
         },
