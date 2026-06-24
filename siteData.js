@@ -995,7 +995,7 @@ window.siteData = {
         },
         {
           title: "Designing Spectrum",
-          description: "My work for KEP during my Summer2025 internship.",
+          description: "SPRNOVA's first research project: a social game powered by mathematical prediction.",
           target: "spectrum",
           position: "bottom-left",
           depth: 14
@@ -1026,6 +1026,38 @@ window.siteData = {
         }
       ],
       cards: [
+      ],
+      media: [
+        {
+          src: "media/nts_collatz_6.png",
+          alt: "Collatz Conjecture Research Image 1",
+          caption: "Problem framing that I used, representing backwards movement through a specific Collatz sequence with a vector"
+        },
+        {
+          src: "media/nts_collatz_2.png",
+          alt: "Collatz Conjecture Research Image 2",
+          caption: "A looping integer as a function of a specfic backwards sequence. An integer input N produces an integer x if and only if x is in a loop."
+        },
+        {
+          src: "media/nts_collatz_3.png",
+          alt: "Collatz Conjecture Research Image 3",
+          caption: "Graphs which show the number of confirmed integers we must have before eliminating a loop with m odd numbers in it"
+        },
+        {
+          src: "media/nts_collatz_4.png",
+          alt: "Collatz Conjecture Research Image 4",
+          caption: "For every point (x,y), if we have found no looping numbers greater than y, there are no loops with x odd numbers."
+        },
+        {
+          src: "media/nts_collatz_5.png",
+          alt: "Collatz Conjecture Research Image 5",
+          caption: "Beautiful plot on the complex plane retrieved by turning F(N) into a complex function. A red line passing through a lattice point corresponds to a looping integer. Ex: (2,2) -> 1"
+        },
+        {
+          src: "media/nts_306_coll.jpeg",
+          alt: "Collatz Conjecture Research Image 6",
+          caption: "Using generating functions to break apart the trajectory of a number through the collatz sequence."
+        }
       ]
     },
 
