@@ -76,11 +76,11 @@ window.siteData = {
       kicker: "Planetary Systems",
       title: "Works",
       intro: `
-        Here I include my work experience, ventures, and personal projects.
+        Experience. Ventures. Personal projects.
       `,
       sections: [
         {
-          title: "Project Philosophy",
+          title: "Philosophy",
           text: "I like building things that feel conceptually deep and practically useful. Technical systems with a strong identity. Once a project claims it's own identity, it takes on a life of its own, and becomes a vehicle for creativity and impact that can be more powerful than its creator alone."
         }
       ],
@@ -469,11 +469,10 @@ window.siteData = {
 
     writing: {
       kicker: "Galaxy of Thought",
-      title: "Writing",
+      title: "Creative Writing",
       intro: `
-        I write to explore my own mind, and ground abstract ideas in human experience.
-        Poetry is especially important to me as a way of expressing things that can’t
-        be fully captured by direct explanation, sort of like mathematics. On the right is a collection of most of my poems.
+        Exploring my own mind and grounding abstract ideas in human experience.
+        Poetry is especially important to me as a vehicle of self expression. Like mathematics, it expresses things that are difficult to put into words. Scroll on the right to view my poems.
       `,
       sections: [
         {
@@ -962,12 +961,12 @@ window.siteData = {
       kicker: "Omphalos",
       title: "Mathematics",
       intro: `
-        Math is one of my greatest passions. Other than English, it is the only language I know. It is an artform. Outside of formal studies, I've dedicated countless hours to learning it, honing it, and creating with it. 
+        Math is one of my greatest passions. Other than English and Spanish, it is the only language I know. It is an artform. Outside of formal studies, I've dedicated countless hours to learning it, honing it, and creating with it. 
       `,
       sections: [
         {
           title: "Purpose",
-          text: "This section compiles my independent research, notes, and ideas within the field of math."
+          text: "Independent research. Notes. Math theories/ideas."
         }
       ],
       cards: [
@@ -980,7 +979,7 @@ window.siteData = {
         },
         {
           title: "Coursework",
-          description: "Notes from formal coursework at Northwestern University.",
+          description: "Formal coursework notes @ Northwestern University",
           target: "courses",
           position: "bottom-left",
           depth: 14
@@ -1182,8 +1181,8 @@ window.siteData = {
           link: "https://www.math.northwestern.edu/undergraduate/mathematical-experience-for-northwestern-undergraduates-menu/"
         },
         {
-          title: "Fall Classes",
-          text: "Some classes listed are ones that I am enrolled to take in Fall2026, but have not yet taken. Clicking on them links to more course info instead, so that you may join in my excitement to take them.",
+          title: "Fall 2026 Classes",
+          text: "Some of the listed classes are pending. Click on them for additional information, so that you can learn more and perhaps share in my excitement as I prepare to take them.",
         }
       ],
       cards: [],
