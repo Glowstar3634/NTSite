@@ -514,6 +514,11 @@ window.siteData = {
             target: "recipe"
           },
           {
+            title: "Synapse",
+            description: "Connection, attraction, but nothing at all.",
+            target: "synapse"
+          },
+          {
             title: "Dreams",
             description: "Haiku - Dreams",
             target: "dreams"
@@ -532,6 +537,11 @@ window.siteData = {
             title: "Paint",
             description: "Perspective, color, morality, and interpretation.",
             target: "paint"
+          },
+          {
+            title: "The Spectator",
+            description: "Introspection at its worst.",
+            target: "spectator"
           },
           {
             title: "Do Unto Others",
@@ -659,6 +669,70 @@ window.siteData = {
     as the smoke fills… 
     why, why do you burn?`
         }
+    },
+    synapse: {
+      kicker: "7/30/26",
+      title: "Synapse",
+        intro: "",
+        sections: [],
+        cards: [],
+        poem: {
+            note: "and that is okay",
+            text: `
+    the brain is a beautiful thing
+    zoom in on two neurons and see
+    a spark that holds no meaning
+
+    to one, the other’s existence
+    welcomed. and to the other?
+    oh, but to the other!
+    what pathways were discovered,
+    and connections to another.
+    the spark held so much meaning.
+
+    two brains are such beautiful things
+    when they intercept, and one 
+    teems with life and depth, and the other 
+    gleams with light, then death of binds
+    that hold back attracted minds.
+
+    but the binds are not dead, says the other,
+    and they won’t die, should say the one.
+    the minds can teem and gleam together,
+    but may only in dreams the 
+    synapses dance between the two,
+    since the brain is a beautiful thing.
+            `
+        }
+    },
+    spectator:{
+      kicker: "7/31/26",
+      title: "The Spectator",
+        intro: "",
+        sections: [],
+        cards: [],
+        poem: {
+            note: "the television is painfully bright in the darkness",
+            text: `
+    oftentimes i am not myself but rather,
+    a spectator of my own life.
+    he sifts the mind files and
+    checks the sense systems and
+    scribbles loudly in his notebooks.
+    and at times i am he, and not
+    the mindful and the sensing.
+
+    and oftentimes the mindful becomes
+    the spectator in my own life.
+    he stays hush in gatherings and
+    loses the words and feelings and
+    drifts into himself. scratch, scratch.
+    and at times i curse he; a
+    quiet mind would be a blessing.
+            `
+        }
+    },
+    cold: {
     },
     mirage: {
       kicker: "2/25/26",
