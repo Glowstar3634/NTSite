@@ -499,6 +499,11 @@ window.siteData = {
             target: "mirage"
           },
           {
+            title: "How Wonderful It'd Be",
+            description: "Pantoum on the fruits of action.",
+            target: "wonderful"
+          },
+          {
             title: "Glass",
             description: "Emotional road to clarity from distortion.",
             target: "glass"
@@ -732,7 +737,51 @@ window.siteData = {
             `
         }
     },
-    cold: {
+    wonderful:{
+      kicker: "7/31/26",
+      title: "How Wonderful It'd Be",
+        intro: "",
+        sections: [],
+        cards: [],
+        poem: {
+            note: "matter over mind",
+            text: `
+    How wonderful it’d be
+    To live inside your lying mind.
+    Your dreams could set you free,
+    Flailing arms could let you fly.
+
+    To live inside your lying mind,
+    No bounds to what you can achieve!
+    Flailing arms could let you fly,
+    If you truly just believe.
+
+    No bounds to what you can achieve
+    Outside the constructs in your head.
+    If you truly just believe,
+    You’ll fall for fantasies instead.
+
+    Outside the constructs in your head
+    The world is carved from blood and sweat.
+    You’ll fall for fantasies instead,
+    Then swim in tears stained with regret.
+
+    The world is carved from blood and sweat
+    No glory ever came for free.
+    Then swim in tears stained with regret.
+    Your prize was never destiny!
+
+    No glory ever came for free,
+    Unveil your strength that’s deep within.
+    Your prize was never destiny,
+    It’s there for you to win.
+
+    Unveil your strength that’s deep within,
+    Your dreams could set you free.
+    It’s there for you to win…
+    How wonderful it’d be.
+            `
+        }
     },
     mirage: {
       kicker: "2/25/26",

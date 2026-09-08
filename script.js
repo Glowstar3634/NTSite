@@ -10,6 +10,64 @@ const mouse = {
   targetY: 0
 };
 
+const viewportState = {
+  width: window.innerWidth,
+  height: window.innerHeight,
+  isPortrait: window.innerHeight >= window.innerWidth,
+  isCoarse: window.matchMedia("(pointer: coarse)").matches,
+  isTouch: "ontouchstart" in window || navigator.maxTouchPoints > 0,
+  device: "desktop"
+};
+
+function getViewportSize() {
+  return {
+    width: Math.round(window.visualViewport?.width || window.innerWidth),
+    height: Math.round(window.visualViewport?.height || window.innerHeight)
+  };
+}
+
+function updateViewportState() {
+  const { width, height } = getViewportSize();
+  const minSide = Math.min(width, height);
+  const maxSide = Math.max(width, height);
+  const isPortrait = height >= width;
+  const isCoarse = window.matchMedia("(pointer: coarse)").matches;
+  const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+  const isSmallScreen = width <= 820 || height <= 560 || minSide <= 600;
+  const isMobileLike = isTouch || isCoarse || isSmallScreen;
+  const isTablet = isMobileLike && maxSide >= 900 && minSide >= 600;
+  const device = isMobileLike ? (isTablet ? "tablet" : "mobile") : "desktop";
+
+  viewportState.width = width;
+  viewportState.height = height;
+  viewportState.isPortrait = isPortrait;
+  viewportState.isCoarse = isCoarse;
+  viewportState.isTouch = isTouch;
+  viewportState.device = device;
+
+  document.documentElement.style.setProperty("--app-height", `${height}px`);
+  document.documentElement.style.setProperty("--viewport-width", `${width}px`);
+  document.documentElement.style.setProperty("--viewport-height", `${height}px`);
+
+  document.body.dataset.device = device;
+  document.body.dataset.orientation = isPortrait ? "portrait" : "landscape";
+  document.body.classList.toggle("device-mobile", device === "mobile");
+  document.body.classList.toggle("device-tablet", device === "tablet");
+  document.body.classList.toggle("device-desktop", device === "desktop");
+  document.body.classList.toggle("orientation-portrait", isPortrait);
+  document.body.classList.toggle("orientation-landscape", !isPortrait);
+}
+
+function isCompactLayout() {
+  return (
+    viewportState.device !== "desktop" ||
+    viewportState.width <= 820 ||
+    viewportState.height <= 560
+  );
+}
+
+updateViewportState();
+
 let lastTime = 0;
 
 let warpStart = null;
@@ -280,18 +338,19 @@ function resetStar(star, placeFarAway = true) {
 }
 
 function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = viewportState.width;
+  canvas.height = viewportState.height;
 
   const area = canvas.width * canvas.height;
-  const starCount = Math.min(520, Math.floor(area / 2600));
+  const starLimit = viewportState.device === "desktop" ? 520 : 300;
+  const density = viewportState.device === "desktop" ? 2600 : 3900;
+  const starCount = Math.min(starLimit, Math.max(90, Math.floor(area / density)));
 
   stars = Array.from({ length: starCount }, () => {
     const star = {};
     resetStar(star, false);
     return star;
   });
-
 }
 
 function getWarpAmount(time) {
@@ -347,8 +406,8 @@ function setTravelCSSVarsFromElement(element) {
   document.documentElement.style.setProperty("--travel-y", `${dy}px`);
 
   return {
-    x: centerX / window.innerWidth,
-    y: centerY / window.innerHeight
+    x: centerX / viewportState.width,
+    y: centerY / viewportState.height
   };
 }
 
@@ -632,7 +691,10 @@ function draw(time) {
   drawBackground();
   drawStars(time, delta, warpAmount, travelAmount);
   updateSpaceObjectParallax();
-  updateStackBends();
+
+  if (!isCompactLayout()) {
+    updateStackBends();
+  }
 
   requestAnimationFrame(draw);
 }
@@ -719,8 +781,14 @@ function configureMedia(scope = document) {
 
       if (!media || !image.naturalWidth || !image.naturalHeight) return;
 
-      const maxWidth = Math.min(360, window.innerWidth * 0.3);
-      const maxHeight = Math.min(280, window.innerHeight * 0.36);
+      const compact = isCompactLayout();
+      const maxWidth = compact
+        ? Math.min(320, viewportState.width * 0.82)
+        : Math.min(360, viewportState.width * 0.3);
+
+      const maxHeight = compact
+        ? Math.min(260, viewportState.height * 0.42)
+        : Math.min(280, viewportState.height * 0.36);
 
       const scale = Math.min(
         maxWidth / image.naturalWidth,
@@ -958,6 +1026,10 @@ function renderContentScene(scene, pageId) {
   `;
 
   configureMedia(scene);
+
+  if (!isCompactLayout()) {
+    requestAnimationFrame(updateStackBends);
+  }
 }
 
 function getSpareScene() {
@@ -966,8 +1038,8 @@ function getSpareScene() {
 }
 
 function setTravelCSSVarsFromFocus(focus) {
-  const dx = (focus.x - 0.5) * window.innerWidth;
-  const dy = (focus.y - 0.5) * window.innerHeight;
+  const dx = (focus.x - 0.5) * viewportState.width;
+  const dy = (focus.y - 0.5) * viewportState.height;
 
   document.documentElement.style.setProperty("--travel-x", `${dx}px`);
   document.documentElement.style.setProperty("--travel-y", `${dy}px`);
@@ -980,8 +1052,8 @@ function setTravelCSSVarsFromElement(element) {
   const centerY = rect.top + rect.height / 2;
 
   const focus = {
-    x: centerX / window.innerWidth,
-    y: centerY / window.innerHeight
+    x: centerX / viewportState.width,
+    y: centerY / viewportState.height
   };
 
   setTravelCSSVarsFromFocus(focus);
@@ -1147,8 +1219,8 @@ window.addEventListener("mousemove", (event) => {
   sound.lastPointerY = event.clientY;
   sound.lastPointerTime = now;
 
-  mouse.targetX = (event.clientX / window.innerWidth - 0.5) * -10;
-  mouse.targetY = (event.clientY / window.innerHeight - 0.5) * -10;
+  mouse.targetX = (event.clientX / viewportState.width - 0.5) * -10;
+  mouse.targetY = (event.clientY / viewportState.height - 0.5) * -10;
 });
 
 window.addEventListener("mouseleave", () => {
@@ -1156,10 +1228,29 @@ window.addEventListener("mouseleave", () => {
   mouse.targetY = 0;
 });
 
-window.addEventListener("resize", () => {
-  resizeCanvas();
-  configureMedia(document);
+let viewportUpdateFrame = null;
+
+function handleViewportChange() {
+  if (viewportUpdateFrame !== null) return;
+
+  viewportUpdateFrame = requestAnimationFrame(() => {
+    viewportUpdateFrame = null;
+    updateViewportState();
+    resizeCanvas();
+    configureMedia(document);
+
+    if (!isCompactLayout()) {
+      updateStackBends();
+    }
+  });
+}
+
+window.addEventListener("resize", handleViewportChange);
+window.addEventListener("orientationchange", () => {
+  setTimeout(handleViewportChange, 120);
 });
+
+window.visualViewport?.addEventListener("resize", handleViewportChange);
 
 function enableSoundOnFirstInteraction() {
   setSoundEnabled(true);
