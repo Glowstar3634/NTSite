@@ -10,18 +10,6 @@ body {
   height: 100%;
 }
 
-:root {
-  --app-height: 100vh;
-  --viewport-width: 100vw;
-  --viewport-height: 100vh;
-}
-
-@supports (height: 100svh) {
-  :root {
-    --app-height: 100svh;
-  }
-}
-
 body {
   font-family: Inter, system-ui, sans-serif;
   background: #000;
@@ -32,8 +20,6 @@ body {
 #field {
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: var(--app-height);
   z-index: -2;
   background: #000;
   opacity: 1;
@@ -71,7 +57,6 @@ body.traveling #field {
 #space-ui {
   position: fixed;
   inset: 0;
-  min-height: var(--app-height);
   overflow: hidden;
   perspective: 1000px;
 }
@@ -270,6 +255,39 @@ body.loading .space-object {
   transform: translateX(-50%);
 }
 
+.sound-toggle {
+  position: fixed;
+  top: clamp(22px, 3vw, 38px);
+  left: 50%;
+  z-index: 20;
+
+  border: 1px solid rgba(185, 205, 255, 0.24);
+  border-radius: 999px;
+  padding: 9px 14px;
+  background: rgba(5, 8, 22, 0.42);
+  color: rgba(220, 228, 255, 0.78);
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 24px rgba(100, 125, 255, 0.1);
+
+  transform: translateX(-50%);
+  transition:
+    color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.sound-toggle:hover,
+.sound-toggle[aria-pressed="true"] {
+  color: rgba(255, 255, 255, 0.96);
+  border-color: rgba(205, 220, 255, 0.58);
+  box-shadow: 0 0 30px rgba(125, 160, 255, 0.26);
+}
 
 .corner-link,
 .back-button {
@@ -1103,16 +1121,13 @@ body.loading .space-object {
   justify-self: end;
 }
 
-
-/* ---------------- RESPONSIVE DEVICE + ORIENTATION LAYOUT ---------------- */
+/* ---------------- MOBILE-ONLY DEVICE + ORIENTATION LAYOUT ---------------- */
 
 /*
-  script.js adds body classes such as:
+  Desktop styles above are intentionally left untouched.
+  script.js adds:
   .device-mobile / .device-tablet / .device-desktop
   .orientation-portrait / .orientation-landscape
-
-  The site still feels like the same space UI on desktop, but on compact
-  screens the panels, cards, photos, and archive stacks become scroll-friendly.
 */
 
 body.device-mobile,
@@ -1127,7 +1142,7 @@ body.device-tablet .space-object {
 }
 
 body.device-mobile .scene.active,
-body.device-tablet .scene.active {
+body.device-tablet.orientation-portrait .scene.active {
   min-height: var(--app-height);
 }
 
@@ -1137,9 +1152,9 @@ body.device-tablet.orientation-portrait .content-scene {
   overflow-y: auto;
   overflow-x: hidden;
   padding:
-    calc(env(safe-area-inset-top, 0px) + 76px)
-    clamp(14px, 4vw, 24px)
-    calc(env(safe-area-inset-bottom, 0px) + 38px);
+    calc(env(safe-area-inset-top, 0px) + 72px)
+    clamp(10px, 3vw, 18px)
+    calc(env(safe-area-inset-bottom, 0px) + 34px);
   -webkit-overflow-scrolling: touch;
 }
 
@@ -1147,35 +1162,50 @@ body.device-mobile .content-layout,
 body.device-tablet.orientation-portrait .content-layout,
 body.device-mobile .content-layout.has-stack,
 body.device-tablet.orientation-portrait .content-layout.has-stack {
+  --mobile-flow-width: min(88vw, 430px);
+  --mobile-panel-width: min(68vw, 340px);
+  --mobile-media-size: clamp(40px, 11vw, 54px);
+  --mobile-media-gap: clamp(4px, 1.4vw, 8px);
+
+  position: relative;
   width: 100%;
   height: auto;
   min-height: auto;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   justify-content: flex-start;
-  gap: 16px;
+  gap: 12px;
 }
 
 body.device-mobile .space-panel,
 body.device-mobile .poem-panel,
 body.device-tablet.orientation-portrait .space-panel,
 body.device-tablet.orientation-portrait .poem-panel {
-  width: 100%;
+  width: var(--mobile-flow-width);
   max-height: none;
   overflow: visible;
-  padding: clamp(22px, 5vw, 34px);
-  border-radius: 24px;
+  padding: clamp(18px, 4.2vw, 28px);
+  border-radius: 22px;
   backdrop-filter: blur(12px);
+}
+
+body.device-mobile .content-layout:has(.space-media) .space-panel,
+body.device-mobile .content-layout:has(.space-media) .poem-panel,
+body.device-tablet.orientation-portrait .content-layout:has(.space-media) .space-panel,
+body.device-tablet.orientation-portrait .content-layout:has(.space-media) .poem-panel {
+  width: var(--mobile-panel-width);
 }
 
 body.device-mobile .space-panel h2,
 body.device-tablet.orientation-portrait .space-panel h2,
 body.device-mobile .poem-title,
 body.device-tablet.orientation-portrait .poem-title {
-  font-size: clamp(2.25rem, 13vw, 4.9rem);
-  line-height: 0.92;
-  letter-spacing: -0.07em;
+  font-size: clamp(1.85rem, 10.5vw, 3.65rem);
+  line-height: 0.94;
+  letter-spacing: -0.065em;
+  margin-bottom: 20px;
 }
 
 body.device-mobile .space-panel p,
@@ -1186,24 +1216,30 @@ body.device-tablet.orientation-portrait .space-panel p,
 body.device-tablet.orientation-portrait .space-panel li,
 body.device-tablet.orientation-portrait .poem-text,
 body.device-tablet.orientation-portrait .poem-note {
-  font-size: clamp(0.97rem, 4vw, 1.08rem);
-  line-height: 1.68;
+  font-size: clamp(0.82rem, 3.25vw, 0.98rem);
+  line-height: 1.58;
+}
+
+body.device-mobile .space-panel li,
+body.device-tablet.orientation-portrait .space-panel li {
+  padding: 12px 13px;
+  border-radius: 15px;
 }
 
 body.device-mobile .page-kicker,
 body.device-mobile .poem-subtitle,
 body.device-tablet.orientation-portrait .page-kicker,
 body.device-tablet.orientation-portrait .poem-subtitle {
-  font-size: 0.67rem;
-  letter-spacing: 0.2em;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  margin-bottom: 12px;
 }
 
+/* display: contents lets cards flow below the panel while media bubbles stay absolute beside it. */
 body.device-mobile .node-cloud,
 body.device-tablet.orientation-portrait .node-cloud {
   position: static;
-  width: 100%;
-  display: grid;
-  gap: 14px;
+  display: contents;
   pointer-events: auto;
 }
 
@@ -1214,228 +1250,271 @@ body.device-tablet.orientation-portrait .space-card {
   right: auto;
   bottom: auto;
   left: auto;
-  width: 100%;
-  padding: 17px;
-  transform: translate3d(var(--px), var(--py), 0) !important;
+  width: var(--mobile-flow-width);
+  padding: 14px 15px;
+  border-radius: 19px;
+  transform: none !important;
+}
+
+body.device-mobile .space-card h3,
+body.device-tablet.orientation-portrait .space-card h3 {
+  font-size: 0.73rem;
+  letter-spacing: 0.13em;
+  margin-bottom: 7px;
 }
 
 body.device-mobile .space-card p,
 body.device-tablet.orientation-portrait .space-card p {
-  font-size: 0.9rem;
-  line-height: 1.48;
+  font-size: 0.78rem;
+  line-height: 1.42;
 }
 
 body.device-mobile .curved-stack,
 body.device-tablet.orientation-portrait .curved-stack {
-  position: static;
-  width: 100%;
+  position: relative;
+  top: auto;
+  right: auto;
+  width: var(--mobile-flow-width);
   max-height: none;
   padding: 0;
   overflow: visible;
-  transform: translate3d(var(--px), var(--py), 0) !important;
+  transform: none !important;
   mask-image: none;
   -webkit-mask-image: none;
 }
 
 body.device-mobile .stack-label,
 body.device-tablet.orientation-portrait .stack-label {
-  margin: 8px 0 14px;
-  font-size: 0.66rem;
-  letter-spacing: 0.22em;
+  margin: 8px 0 12px;
+  font-size: 0.6rem;
+  letter-spacing: 0.19em;
 }
 
 body.device-mobile .stack-item,
 body.device-tablet.orientation-portrait .stack-item {
   width: 100%;
-  margin: 0 0 13px 0;
+  margin: 0 0 10px 0;
+  padding: 14px 15px;
+  border-radius: 18px;
   opacity: 1 !important;
   transform: none !important;
 }
 
+body.device-mobile .stack-item h3,
+body.device-tablet.orientation-portrait .stack-item h3 {
+  font-size: 0.72rem;
+  letter-spacing: 0.13em;
+  margin-bottom: 6px;
+}
+
+body.device-mobile .stack-item p,
+body.device-tablet.orientation-portrait .stack-item p {
+  font-size: 0.78rem;
+  line-height: 1.42;
+}
+
+/* Mobile media stays beside the center panel instead of flowing under it. */
 body.device-mobile .space-media,
 body.device-tablet.orientation-portrait .space-media {
-  position: relative;
-  top: auto;
-  right: auto;
-  bottom: auto;
-  left: auto;
-  width: 100%;
+  --media-size: var(--mobile-media-size);
+
+  position: absolute;
+  width: var(--media-size);
   height: var(--media-size);
-  min-height: var(--media-size);
-  margin: 8px auto 124px;
+  min-height: 0;
+  margin: 0;
+  z-index: 3;
   transform: none !important;
+}
+
+body.device-mobile .media-left-top,
+body.device-tablet.orientation-portrait .media-left-top {
+  top: clamp(6px, 6vh, 32px);
+  left: max(4px, calc((100% - var(--mobile-panel-width)) / 2 - var(--media-size) - var(--mobile-media-gap)));
+}
+
+body.device-mobile .media-left-middle,
+body.device-tablet.orientation-portrait .media-left-middle {
+  top: clamp(104px, 23vh, 170px);
+  left: max(4px, calc((100% - var(--mobile-panel-width)) / 2 - var(--media-size) - var(--mobile-media-gap)));
+}
+
+body.device-mobile .media-left-bottom,
+body.device-tablet.orientation-portrait .media-left-bottom {
+  top: clamp(202px, 40vh, 300px);
+  left: max(4px, calc((100% - var(--mobile-panel-width)) / 2 - var(--media-size) - var(--mobile-media-gap)));
+  bottom: auto;
+}
+
+body.device-mobile .media-right-top,
+body.device-tablet.orientation-portrait .media-right-top {
+  top: clamp(6px, 6vh, 32px);
+  right: max(4px, calc((100% - var(--mobile-panel-width)) / 2 - var(--media-size) - var(--mobile-media-gap)));
+}
+
+body.device-mobile .media-right-middle,
+body.device-tablet.orientation-portrait .media-right-middle {
+  top: clamp(104px, 23vh, 170px);
+  right: max(4px, calc((100% - var(--mobile-panel-width)) / 2 - var(--media-size) - var(--mobile-media-gap)));
+}
+
+body.device-mobile .media-right-bottom,
+body.device-tablet.orientation-portrait .media-right-bottom {
+  top: clamp(202px, 40vh, 300px);
+  right: max(4px, calc((100% - var(--mobile-panel-width)) / 2 - var(--media-size) - var(--mobile-media-gap)));
+  bottom: auto;
+}
+
+body.device-mobile .media-frame,
+body.device-tablet.orientation-portrait .media-frame,
+body.device-mobile .media-left-top .media-frame,
+body.device-mobile .media-left-middle .media-frame,
+body.device-mobile .media-left-bottom .media-frame,
+body.device-mobile .media-right-top .media-frame,
+body.device-mobile .media-right-middle .media-frame,
+body.device-mobile .media-right-bottom .media-frame,
+body.device-tablet.orientation-portrait .media-left-top .media-frame,
+body.device-tablet.orientation-portrait .media-left-middle .media-frame,
+body.device-tablet.orientation-portrait .media-left-bottom .media-frame,
+body.device-tablet.orientation-portrait .media-right-top .media-frame,
+body.device-tablet.orientation-portrait .media-right-middle .media-frame,
+body.device-tablet.orientation-portrait .media-right-bottom .media-frame {
+  transform-origin: center center;
 }
 
 body.device-mobile .space-media figcaption,
 body.device-tablet.orientation-portrait .space-media figcaption {
-  width: min(280px, 80vw);
-}
-
-body.device-mobile .media-frame,
-body.device-tablet.orientation-portrait .media-frame {
-  transform-origin: center center;
+  width: min(170px, 46vw);
+  font-size: 0.68rem;
 }
 
 body.device-mobile .back-button,
-body.device-tablet .back-button {
-  top: calc(env(safe-area-inset-top, 0px) + 16px);
-  left: calc(env(safe-area-inset-left, 0px) + 14px);
+body.device-tablet.orientation-portrait .back-button {
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+  left: calc(env(safe-area-inset-left, 0px) + 12px);
   z-index: 30;
-}
-
-body.device-mobile.orientation-portrait .identity-inner {
-  transform: translateY(-2vh);
-}
-
-body.device-mobile.orientation-portrait .identity h1 {
-  font-size: clamp(3.2rem, 19vw, 5.7rem);
-  letter-spacing: 0.19em;
-  margin-right: -0.19em;
-}
-
-body.device-mobile.orientation-portrait .identity-subtitle {
-  margin-top: 20px;
-  font-size: clamp(0.78rem, 3.5vw, 1rem);
-  letter-spacing: 0.72em;
-  margin-right: -0.72em;
-}
-
-body.device-mobile.orientation-portrait .home-motto {
-  bottom: calc(100% + clamp(66px, 14vh, 128px));
-  font-size: clamp(2.05rem, 12vw, 3.1rem);
-  letter-spacing: 0.01em;
 }
 
 body.device-mobile .corner-link,
 body.device-mobile .back-button,
 body.device-tablet.orientation-portrait .corner-link,
 body.device-tablet.orientation-portrait .back-button {
-  font-size: 0.66rem;
-  letter-spacing: 0.11em;
-  padding: 10px 12px;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  padding: 9px 10px;
   backdrop-filter: blur(9px);
+}
+
+body.device-mobile.orientation-portrait .identity-inner,
+body.device-tablet.orientation-portrait .identity-inner {
+  transform: translateY(-1vh);
+}
+
+body.device-mobile.orientation-portrait .identity h1,
+body.device-tablet.orientation-portrait .identity h1 {
+  font-size: clamp(2.85rem, 17vw, 5.35rem);
+  letter-spacing: 0.18em;
+  margin-right: -0.18em;
+}
+
+body.device-mobile.orientation-portrait .identity-subtitle,
+body.device-tablet.orientation-portrait .identity-subtitle {
+  margin-top: 18px;
+  font-size: clamp(0.72rem, 3.1vw, 0.95rem);
+  letter-spacing: 0.66em;
+  margin-right: -0.66em;
+}
+
+body.device-mobile.orientation-portrait .home-motto,
+body.device-tablet.orientation-portrait .home-motto {
+  bottom: calc(100% + clamp(62px, 13vh, 116px));
+  font-size: clamp(1.9rem, 10vw, 2.95rem);
 }
 
 body.device-mobile .top-left,
 body.device-tablet.orientation-portrait .top-left {
-  top: calc(env(safe-area-inset-top, 0px) + 18px);
-  left: calc(env(safe-area-inset-left, 0px) + 14px);
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  left: calc(env(safe-area-inset-left, 0px) + 12px);
 }
 
 body.device-mobile .top-right,
 body.device-tablet.orientation-portrait .top-right {
-  top: calc(env(safe-area-inset-top, 0px) + 18px);
-  right: calc(env(safe-area-inset-right, 0px) + 14px);
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  right: calc(env(safe-area-inset-right, 0px) + 12px);
 }
 
 body.device-mobile .bottom-left,
 body.device-tablet.orientation-portrait .bottom-left {
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 22px);
-  left: calc(env(safe-area-inset-left, 0px) + 14px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+  left: calc(env(safe-area-inset-left, 0px) + 12px);
 }
 
 body.device-mobile .bottom-right,
 body.device-tablet.orientation-portrait .bottom-right {
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 22px);
-  right: calc(env(safe-area-inset-right, 0px) + 14px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+  right: calc(env(safe-area-inset-right, 0px) + 12px);
 }
 
-body.device-mobile.orientation-landscape .home-motto,
-body.device-tablet.orientation-landscape .home-motto {
-  bottom: calc(100% + 30px);
-  font-size: clamp(1.7rem, 5vw, 2.55rem);
-}
-
-body.device-mobile.orientation-landscape .identity h1,
-body.device-tablet.orientation-landscape .identity h1 {
-  font-size: clamp(3.3rem, 13vw, 7.2rem);
-  letter-spacing: 0.24em;
-  margin-right: -0.24em;
-}
-
-body.device-mobile.orientation-landscape .identity-subtitle,
-body.device-tablet.orientation-landscape .identity-subtitle {
-  margin-top: 16px;
-  font-size: clamp(0.72rem, 2vw, 0.95rem);
-  letter-spacing: 0.75em;
-  margin-right: -0.75em;
-}
-
-body.device-mobile.orientation-landscape .content-scene,
-body.device-tablet.orientation-landscape .content-scene {
-  display: block;
-  overflow-y: auto;
-  overflow-x: hidden;
+body.device-mobile.orientation-landscape .content-scene {
   padding:
-    calc(env(safe-area-inset-top, 0px) + 62px)
-    calc(env(safe-area-inset-right, 0px) + 18px)
-    calc(env(safe-area-inset-bottom, 0px) + 22px)
-    calc(env(safe-area-inset-left, 0px) + 18px);
-  -webkit-overflow-scrolling: touch;
+    calc(env(safe-area-inset-top, 0px) + 58px)
+    calc(env(safe-area-inset-right, 0px) + 14px)
+    calc(env(safe-area-inset-bottom, 0px) + 24px)
+    calc(env(safe-area-inset-left, 0px) + 14px);
 }
 
 body.device-mobile.orientation-landscape .content-layout,
-body.device-tablet.orientation-landscape .content-layout,
-body.device-mobile.orientation-landscape .content-layout.has-stack,
-body.device-tablet.orientation-landscape .content-layout.has-stack {
-  width: min(980px, 100%);
-  height: auto;
-  min-height: auto;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 14px;
+body.device-mobile.orientation-landscape .content-layout.has-stack {
+  --mobile-flow-width: min(78vw, 560px);
+  --mobile-panel-width: min(58vw, 470px);
+  --mobile-media-size: clamp(38px, 7vw, 52px);
+  gap: 10px;
 }
 
 body.device-mobile.orientation-landscape .space-panel,
-body.device-mobile.orientation-landscape .poem-panel,
-body.device-tablet.orientation-landscape .space-panel,
-body.device-tablet.orientation-landscape .poem-panel {
-  width: 100%;
-  max-height: calc(var(--app-height) - 110px);
-  overflow-y: auto;
-  padding: clamp(20px, 4vw, 32px);
-  border-radius: 24px;
-  backdrop-filter: blur(12px);
+body.device-mobile.orientation-landscape .poem-panel {
+  max-height: none;
+  padding: clamp(16px, 3vw, 24px);
 }
 
-body.device-mobile.orientation-landscape .node-cloud,
-body.device-tablet.orientation-landscape .node-cloud {
-  position: static;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  width: 100%;
-  gap: 12px;
-  pointer-events: auto;
+body.device-mobile.orientation-landscape .space-panel h2,
+body.device-mobile.orientation-landscape .poem-title {
+  font-size: clamp(1.85rem, 7vw, 3.4rem);
 }
 
-body.device-mobile.orientation-landscape .space-card,
-body.device-tablet.orientation-landscape .space-card {
-  position: relative;
-  top: auto;
-  right: auto;
-  bottom: auto;
-  left: auto;
-  width: 100%;
-  transform: translate3d(var(--px), var(--py), 0) !important;
+body.device-mobile.orientation-landscape .home-motto {
+  bottom: calc(100% + 28px);
+  font-size: clamp(1.65rem, 5vw, 2.5rem);
 }
 
-@media (max-width: 380px) {
+body.device-mobile.orientation-landscape .identity h1 {
+  font-size: clamp(3.2rem, 12vw, 7rem);
+  letter-spacing: 0.22em;
+  margin-right: -0.22em;
+}
+
+body.device-mobile.orientation-landscape .identity-subtitle {
+  margin-top: 14px;
+  font-size: clamp(0.7rem, 2vw, 0.9rem);
+  letter-spacing: 0.7em;
+  margin-right: -0.7em;
+}
+
+@media (max-width: 360px) {
+  body.device-mobile.orientation-portrait .content-layout,
+  body.device-mobile.orientation-portrait .content-layout.has-stack {
+    --mobile-panel-width: min(66vw, 230px);
+    --mobile-media-size: 38px;
+  }
+
+  body.device-mobile.orientation-portrait .space-panel h2,
+  body.device-mobile.orientation-portrait .poem-title {
+    font-size: clamp(1.65rem, 9.5vw, 3rem);
+  }
+
   body.device-mobile.orientation-portrait .identity h1 {
-    font-size: clamp(2.75rem, 18vw, 4.4rem);
+    font-size: clamp(2.55rem, 16vw, 4.5rem);
     letter-spacing: 0.16em;
     margin-right: -0.16em;
-  }
-
-  body.device-mobile.orientation-portrait .home-motto {
-    bottom: calc(100% + 58px);
-    font-size: 1.95rem;
-  }
-
-  body.device-mobile .corner-link,
-  body.device-mobile .back-button {
-    font-size: 0.61rem;
-    padding: 9px 10px;
   }
 }
